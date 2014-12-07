@@ -31,4 +31,4 @@ Start the local server:
 
     npm start
 
-Now the page will be available at http://localhost:5000.
+Now the page will be available at [http://localhost:5000](http://localhost:5000).

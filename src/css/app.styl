@@ -1,0 +1,60 @@
+// app.styl
+
+@import url('http://fonts.googleapis.com/css?family=Droid+Sans+Mono|Open+Sans:300,400,700')
+
+@import "colors"
+
+base_font = 'Open Sans', 'Helvetica Neue', 'Helvetica'
+mono_font = 'Droid Sans Mono', 'Monaco', 'Menlo', 'Courier New', monospace
+
+
+body
+  font-family base_font
+  background sol_background
+
+.container
+  min-width 560px
+  margin-bottom 50px
+
+.row-centered
+  text-align center
+
+.col-centered
+  display inline-block
+  float none
+  // reset the text-align
+  text-align left
+  // inline-block space fix
+  margin-right -4px
+
+.title
+  margin-bottom 35px
+
+.module
+  text-align center
+
+.module-title
+  text-align center
+  margin 25px 0
+
+.generation-label
+  margin-bottom 25px
+  font-size 25pt
+  text-align center
+
+.btn-primary
+  background sol_cyan
+
+.module-canvas
+  svg
+    border 1px solid #ccc
+    background sol_background
+    cursor default
+    -webkit-user-select none
+    -moz-user-select none
+    -ms-user-select none
+    -o-user-select none
+    user-select none
+
+@import "network"
+@import "chart"

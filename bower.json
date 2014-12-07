@@ -1,0 +1,14 @@
+{
+  "name": "animanimate",
+  "description": "An animation showing the evolution of animats.",
+  "version": "0.0.1",
+  "homepage": "http://github.com/wmayner/animanimate",
+  "license": "GPLv3",
+  "private": "true",
+  "dependencies": {
+    "bootstrap": "~3.1.1",
+    "jquery": "1.10.2",
+    "d3": "3.x",
+    "rickshaw": "^1.4.x"
+  }
+}

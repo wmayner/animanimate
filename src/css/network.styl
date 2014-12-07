@@ -1,0 +1,44 @@
+// network.styl
+
+node_radius = 18
+
+#network-container
+
+  svg
+    &:not(.active):not(.shiftkey)
+      cursor crosshair
+      path
+        &.link
+          cursor pointer
+
+  path.link
+    fill none
+    stroke edge_color
+    stroke-width 5px
+    cursor default
+    opacity 0.7
+    &.selected
+      stroke-dasharray 10, 3
+    &.dragline
+      pointer-events none
+    &.hidden
+      stroke-width 0
+
+  .arrow-head
+    fill edge_color
+
+  circle.node
+    stroke-width 1.5px
+    cursor pointer
+    &.reflexive
+      stroke #aaa !important
+      stroke-width 6px
+
+  text
+    font 14px 'Helvetica Neue', sans-serif
+    pointer-events none
+    &.node-label
+      text-anchor middle
+      &.id
+        font 20px 'Helvetica Neue', sans-serif
+        font-weight bold

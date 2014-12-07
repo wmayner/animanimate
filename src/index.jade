@@ -20,8 +20,12 @@ body
     .row.clearfix.row-centered
       .col-centered
         h1.page-header.title Evolving Animats
+        .animation-controls
+          .btn-group
+            button#play-pause.btn.btn-large.btn-default
+              span.glyphicon.glyphicon-play
         .generation-label
-          p Generation: 
+          p Generation 
             span#generation 0
     .row.clearfix
       .col-lg-6
@@ -34,13 +38,14 @@ body
         #chart-module.module
           .row.clearfix.centered
             .col-centered
-              h2.module-title Fitness and Phi
-              #chart-container
-                #fitness-axis
-                #chart.module-canvas
-                #phi-axis
-                #x-axis
-                #legend
+              h2.module-title Phi
+              #phi-chart-container
+                #phi-chart.chart.module-canvas
+                #phi-legend
+              h2.module-title Fitness
+              #fitness-chart-container
+                #fitness-chart.chart.module-canvas
+                #fitness-legend
 
   // Online/Offline
   // script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')

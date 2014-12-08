@@ -19,19 +19,11 @@ Clone this repo and `cd` into it:
     git clone https://github.com/wmayner/animanimate.git
     cd animanimate
 
-Install the dependencies:
-
-    npm install
-
 Install the global development dependencies:
 
     npm install -g gulp
 
-Build the app:
-
-    gulp build
-
-Start the local server:
+Install the dependencies, build the app, and start local server:
 
     npm start
 

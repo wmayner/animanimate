@@ -98,37 +98,52 @@ $(document).ready ->
   generations = undefined
   currentGeneration = 0
 
+  displayPlayButton = ->
+    $("#{PLAY_PAUSE_BUTTON_SELECTOR} > span")
+        .removeClass('glyphicon-pause')
+        .addClass('glyphicon-play')
+
+  displayPauseButton = ->
+    $("#{PLAY_PAUSE_BUTTON_SELECTOR} > span")
+        .removeClass('glyphicon-play')
+        .addClass('glyphicon-pause')
+
   animate = ->
     if currentGeneration < generations.length
       render(generations[currentGeneration])
     else
       clearInterval(animation)
+      displayPlayButton()
       finished = true
     currentGeneration++
 
+  clear = ->
+    console.log "Clearing graphs"
+    currentGeneration = 0
+    phiChart.clear()
+    fitnessChart.clear()
+
   playAnimation = ->
+    console.log "Playing animation"
     running = true
-    if finished
-      currentGeneration = 0
-      phiChart.clear()
-      fitnessChart.clear()
-    $("#{PLAY_PAUSE_BUTTON_SELECTOR} > span")
-        .removeClass('glyphicon-play')
-        .addClass('glyphicon-pause')
+    finished = false
+    displayPauseButton()
     animation = setInterval(animate, SPEED)
 
   pauseAnimation = ->
+    console.log "Pausing animation"
     clearInterval(animation)
-    $("#{PLAY_PAUSE_BUTTON_SELECTOR} > span")
-        .removeClass('glyphicon-pause')
-        .addClass('glyphicon-play')
+    displayPlayButton()
     running = false
 
   $.getJSON 'data/generations.json', (json) ->
     generations = json
     network.load(connectivityToGraph(initialConnectivityMatrix))
     $(PLAY_PAUSE_BUTTON_SELECTOR).mouseup ->
-      if running
+      if running and not finished
         pauseAnimation()
+      else if finished
+        clear()
+        playAnimation()
       else
         playAnimation()

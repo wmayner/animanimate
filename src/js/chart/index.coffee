@@ -7,8 +7,11 @@ GENERATION_STEP = 512
 
 class Chart
   constructor: (args) ->
+    @args = args
+    @graph = @_init(args)
 
-    @graph = new Rickshaw.Graph(
+  _init: (args) ->
+    graph = new Rickshaw.Graph(
       element: args.element
       renderer: 'line'
       width: args.width
@@ -19,27 +22,27 @@ class Chart
         {
           name: args.name
           color: args.color
-          data: [{x: 0, y: 0}]
+          data: []
           scale: args.scale
         }
       ]
     )
 
-    @graph.addData = (d) =>
-      @graph.series[0].data.push(
-        x: @graph.series[0].data.length + 1
+    graph.addData = (d) =>
+      graph.series[0].data.push(
+        x: graph.series[0].data.length + 1
         y: d[args.name]
       )
 
     xAxis = new Rickshaw.Graph.Axis.X(
-      graph: @graph
+      graph: graph
       orientation: 'top'
       tickSize: 5
       tickFormat: (n) ->
         if n < 0 then null else n * GENERATION_STEP
     )
     yAxis = new Rickshaw.Graph.Axis.Y.Scaled(
-      graph: @graph
+      graph: graph
       grid: true
       orientation: 'right'
       scale: args.scale
@@ -47,13 +50,16 @@ class Chart
       tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
     )
     hoverDetail = new Rickshaw.Graph.HoverDetail(
-      graph: @graph
+      graph: graph
     )
-    @graph.render()
+    graph.render()
+    return graph
+
 
   clear: =>
-    @graph.series.data = [{x: 0, y: 0}]
-    graph.render()
+    $(@args.element).html('')
+    @graph = @_init(@args)
+    @graph.render()
 
   load: (data) =>
     @graph.addData(data)

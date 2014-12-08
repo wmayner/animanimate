@@ -14,10 +14,6 @@ Use it to install the latest stable version of Node:
 
     nvm install stable
 
-Start using that version:
-
-    nvm use stable
-
 Clone this repo and `cd` into it:
 
     git clone https://github.com/wmayner/animanimate.git
@@ -26,6 +22,14 @@ Clone this repo and `cd` into it:
 Install the dependencies:
 
     npm install
+
+Install the global development dependencies:
+
+    npm install -g gulp
+
+Build the app:
+
+    gulp build    
 
 Start the local server:
 

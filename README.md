@@ -29,7 +29,7 @@ Install the global development dependencies:
 
 Build the app:
 
-    gulp build    
+    gulp build
 
 Start the local server:
 

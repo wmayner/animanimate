@@ -13,12 +13,12 @@ FIXED_INDICES = SENSORS.concat(HIDDEN).concat(MOTORS)
 positions =
  0: {x: 197, y:  88, fixed: true}
  1: {x: 331, y:  88, fixed: true}
- 2: {x: 102, y: 183, fixed: true}
- 3: {x: 426, y: 183, fixed: true}
- 4: {x: 102, y: 317, fixed: true}
- 5: {x: 426, y: 317, fixed: true}
- 6: {x: 197, y: 412, fixed: true}
- 7: {x: 331, y: 412, fixed: true}
+ 2: {x: 102, y: 225, fixed: true}
+ 3: {x: 426, y: 225, fixed: true}
+ 4: {x: 102, y: 375, fixed: true}
+ 5: {x: 426, y: 375, fixed: true}
+ 6: {x: 197, y: 520, fixed: true}
+ 7: {x: 331, y: 520, fixed: true}
 
 initialConnectivityMatrix = [
   [0,0,0,0,0,0,0,0]
@@ -50,23 +50,44 @@ connectivityToGraph = (cm) ->
 SPEED = 150
 
 chartWidth = 528
-chartHeight = 209
+chartHeight = 150
 
 PHI_RANGE = [0, 1.3]
-FITNESS_RANGE = [0, 130]
+NUM_CONCEPTS_RANGE = [0, 8]
+FITNESS_RANGE = [0, 1]
+MAX_FITNESS = 128
 
 PHI_CHART_ID = 'phi-chart'
 FITNESS_CHART_ID = 'fitness-chart'
+NUM_CONCEPTS_CHART_ID = 'num-concepts-chart'
 
 PLAY_PAUSE_BUTTON_SELECTOR = '#play-pause'
 
 scales =
+  numConcepts: d3.scale.linear().domain(NUM_CONCEPTS_RANGE).nice()
   phi: d3.scale.linear().domain(PHI_RANGE).nice()
   fitness: d3.scale.linear().domain(FITNESS_RANGE).nice()
 
 
 $(document).ready ->
 
+  fitnessChart = new Chart(
+    name: 'fitness'
+    element: document.getElementById(FITNESS_CHART_ID)
+    scale: scales.fitness
+    width: chartWidth
+    height: chartHeight
+    color: '#ff0000'
+    transform: (d) -> d / MAX_FITNESS
+  )
+  numConceptsChart = new Chart(
+    name: 'numConcepts'
+    element: document.getElementById(NUM_CONCEPTS_CHART_ID)
+    scale: scales.numConcepts
+    width: chartWidth
+    height: chartHeight
+    color: '#859900'
+  )
   phiChart = new Chart(
     name: 'phi'
     element: document.getElementById(PHI_CHART_ID)
@@ -75,20 +96,14 @@ $(document).ready ->
     height: chartHeight
     color: '#268bd2'
   )
-  fitnessChart = new Chart(
-    name: 'fitness'
-    element: document.getElementById(FITNESS_CHART_ID)
-    scale: scales.fitness
-    width: chartWidth
-    height: chartHeight
-    color: '#859900'
-  )
+ 
 
   render = (data) ->
     $('#generation').html(data.generation)
     animat = connectivityToGraph(data.connectivityMatrix)
     network.load(animat)
     phiChart.load(data)
+    numConceptsChart.load(data)
     fitnessChart.load(data)
     return
 
@@ -121,6 +136,7 @@ $(document).ready ->
     console.log "Clearing graphs"
     currentGeneration = 0
     phiChart.clear()
+    numConceptsChart.clear()
     fitnessChart.clear()
 
   playAnimation = ->

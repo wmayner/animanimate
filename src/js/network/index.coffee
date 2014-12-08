@@ -8,11 +8,14 @@ MAXIMUM_NODES = 5
 CONTAINER_SELECTOR = '#network-container'
 
 $container = $(CONTAINER_SELECTOR)
-height = 500
+height = 616
 width = 528
 
 NODE_ON_COLOR = d3.rgb 116, 116, 116
 NODE_OFF_COLOR = d3.rgb 42, 161, 152, 0.5
+NODE_MOTOR_COLOR = d3.rgb 200, 0, 0
+NODE_SENSOR_COLOR = d3.rgb 0, 170, 0
+NODE_HIDDEN_COLOR = d3.rgb 255, 210, 0
 NODE_LABEL_COLOR = d3.rgb 255, 255, 255
 NODE_RADIUS = 25
 
@@ -21,7 +24,7 @@ NODE_RADIUS = 25
 # =================================================================
 
 nodeColor = (node) ->
-  return (if node.on then NODE_ON_COLOR else NODE_OFF_COLOR)
+  return (if node.index < 2 then NODE_SENSOR_COLOR else if node.index > 5 then NODE_MOTOR_COLOR else NODE_HIDDEN_COLOR)
 
 # =================================================================
 

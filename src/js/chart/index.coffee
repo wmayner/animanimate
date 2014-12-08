@@ -31,7 +31,7 @@ class Chart
     graph.addData = (d) =>
       graph.series[0].data.push(
         x: graph.series[0].data.length + 1
-        y: d[args.name]
+        y: (if @args.transform? then args.transform(d[args.name]) else d[args.name])
       )
 
     xAxis = new Rickshaw.Graph.Axis.X(

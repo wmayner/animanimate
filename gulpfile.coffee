@@ -28,7 +28,8 @@ Helpers
 ###
 
 compileJade = (inputDir, outputDir) ->
-  cmd = sh.exec "jade #{inputDir} -o #{outputDir}"
+  jade = './node_modules/jade/bin/jade.js'
+  cmd = sh.exec "#{jade} #{inputDir} -o #{outputDir}"
   gutil.log cmd.stdout
   gutil.log "  [jade] Compiled #{inputDir} to #{outputDir}"
 
@@ -41,13 +42,15 @@ compileStylus = (input, outputDir) ->
       gutil.log "  [stylus] Compiled #{input} to #{outputDir}"
 
 compileCoffee = (inputDir, outputDir) ->
-  cmd = sh.exec "coffee -c -o #{outputDir} #{inputDir}"
+  coffee = './node_modules/coffee-script/bin/coffee'
+  cmd = sh.exec "#{coffee} -c -o #{outputDir} #{inputDir}"
   gutil.log cmd.stdout
   gutil.log "  [coffee] Compiled #{inputDir} to #{outputDir}"
 
 runBrowserify = (input, output) ->
   mkdirp path.dirname(output), (err) ->
-    cmd = sh.exec "browserify #{input} --no-cache -o #{output}"
+    browserify = './node_modules/browserify/bin/cmd.js'
+    cmd = sh.exec "#{browserify} #{input} --no-cache -o #{output}"
     gutil.log cmd.stdout
     gutil.log "  [browserify] Compiled #{input} to #{output}"
 

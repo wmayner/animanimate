@@ -1,9 +1,9 @@
 sh = require 'execSync'
+mkdirp = require 'mkdirp'
 path = require 'path'
 gulp = require 'gulp'
 gutil = require 'gulp-util'
 stylus = require 'gulp-stylus'
-coffee = require 'gulp-coffee'
 watch = require 'gulp-watch'
 rimraf = require 'gulp-rimraf'
 
@@ -46,9 +46,10 @@ compileCoffee = (inputDir, outputDir) ->
   gutil.log "  [coffee] Compiled #{inputDir} to #{outputDir}"
 
 runBrowserify = (input, output) ->
-  cmd = sh.exec "browserify #{input} --no-cache -o #{output}"
-  gutil.log cmd.stdout
-  gutil.log "  [browserify] Compiled #{input} to #{output}"
+  mkdirp path.dirname(output), (err) ->
+    cmd = sh.exec "browserify #{input} --no-cache -o #{output}"
+    gutil.log cmd.stdout
+    gutil.log "  [browserify] Compiled #{input} to #{output}"
 
 ###
 # Clean

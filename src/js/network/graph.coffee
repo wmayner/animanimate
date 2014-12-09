@@ -43,9 +43,8 @@ graph.removeEdge('A', 'B'); // => the edge object removed
 ###
 
 # Alphabet for letter labels of nodes.
-ALPHABET = ['S1', 'S2', 'A', 'B', 'C', 'D', 'M1', 'M2', 'I', 'J', 'K',
-            'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
-            'W', 'X', 'Y', 'Z']
+LABELS = ['S1', 'S2', 'A', 'B', 'C', 'D', 'M1', 'M2', 'I', 'J', 'K', 'L', 'M',
+          'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
 
 class Graph
@@ -72,7 +71,7 @@ class Graph
       _outEdges: {}
       _inEdges: {}
       index: @nodeSize
-      label: ALPHABET[@nodeSize]
+      label: LABELS[@nodeSize]
       on: 0
       mechanism: 'MAJ'
       reflexive: false
@@ -119,7 +118,7 @@ class Graph
     @forEachNode (node) ->
       if node.index > nodeToRemove.index
         node.index--
-        node.label = ALPHABET[node.index]
+        node.label = LABELS[node.index]
     return nodeToRemove
 
   addEdge: (sourceId, targetId, weight = 1) ->

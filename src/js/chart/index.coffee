@@ -42,18 +42,19 @@ class Chart
             text: 'Generation'
             position: 'outer-center'
         y:
+          tick:
+            count: 4
+            format: (x) -> d3.round(x, 2)
           padding:
             top: 0
             bottom: 0
       legend:
         show: false
-      grid:
-        y:
-          show: false
     config.data.colors[args.name] = args.color
     config.data.colors['Shadow'] = '#ccc'
     config.axis.y.min = args.min
     config.axis.y.max = args.max
+    if args.grid? then config.grid = args.grid
 
     @_chart = c3.generate(config)
 

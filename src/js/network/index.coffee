@@ -3,6 +3,7 @@
 ###
 
 Graph = require './graph'
+colors = require '../colors'
 
 MAXIMUM_NODES = 5
 CONTAINER_SELECTOR = '#network-container'
@@ -11,26 +12,47 @@ $container = $(CONTAINER_SELECTOR)
 height = 616
 width = 528
 
-NODE_ON_COLOR = d3.rgb 116, 116, 116
-NODE_OFF_COLOR = d3.rgb 42, 161, 152, 0.5
-NODE_MOTOR_COLOR = d3.rgb 200, 0, 0
-NODE_SENSOR_COLOR = d3.rgb 0, 170, 0
-NODE_HIDDEN_COLOR = d3.rgb 255, 210, 0
-NODE_LABEL_COLOR = d3.rgb 255, 255, 255
+ARROW_COLOR = d3.rgb 130, 130, 130
+
+NODE_LABEL_COLOR = '#444'
 NODE_RADIUS = 25
+
+
+# Set up initial graph.
+graph = new Graph()
+
+nodes = graph.getNodes()
+links = graph.getDrawableEdges()
 
 
 # Helpers
 # =================================================================
 
+exports.SENSORS = [0, 1]
+exports.HIDDEN = [2, 3, 4, 5]
+exports.MOTORS = [6, 7]
+
+SENSOR_COLOR = colors.node.sensor
+HIDDEN_COLOR = colors.node.hidden
+MOTOR_COLOR = colors.node.motor
+OTHER_NODE_COLOR = colors.node.other
+
+# Color nodes based on role in the animat.
 nodeColor = (node) ->
-  return (if node.index < 2 then NODE_SENSOR_COLOR else if node.index > 5 then NODE_MOTOR_COLOR else NODE_HIDDEN_COLOR)
+  if node.index in exports.SENSORS
+    return SENSOR_COLOR
+  else if node.index in exports.HIDDEN
+    return HIDDEN_COLOR
+  else if node.index in exports.MOTORS
+    return MOTOR_COLOR
+  else
+    return OTHER_NODE_COLOR
 
 # =================================================================
 
 
 end_arrow_fill_color = d3.rgb()
-start_arrow_fill_color = NODE_OFF_COLOR.darker
+start_arrow_fill_color = ARROW_COLOR.darker()
 
 svg = d3.select(CONTAINER_SELECTOR)
   .append('svg')
@@ -77,7 +99,7 @@ drag_line = svg
 path = svg
   .append('svg:g')
     .selectAll('path')
-circle = svg
+circleGroup = svg
   .append('svg:g')
     .selectAll('g')
 
@@ -98,7 +120,7 @@ resetMouseVars = ->
 # update force layout (called automatically each iteration)
 tick = ->
   # draw directed edges with proper padding from node centers
-  path.attr "d", (edge) ->
+  path.attr("d", (edge) ->
     deltaX = edge.target.x - edge.source.x
     deltaY = edge.target.y - edge.source.y
     dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
@@ -111,8 +133,10 @@ tick = ->
     targetX = edge.target.x - (targetPadding * normX)
     targetY = edge.target.y - (targetPadding * normY)
     return "M#{sourceX},#{sourceY}L#{targetX},#{targetY}"
-  circle.attr 'transform', (node) ->
+  )
+  circleGroup.attr('transform', (node) ->
     "translate(#{node.x},#{node.y})"
+  )
   return
 
 
@@ -124,10 +148,10 @@ restart = ->
   nodes = graph.getNodes()
   links = graph.getDrawableEdges()
 
-  # path (link) group
-  path = path.data(links)
 
-  # update existing links
+  # Bind newly-fetched links to path selection.
+  path = path.data(links)
+  # Update existing links.
   path
       .classed('selected', (edge) ->
         graph.isSameLink(edge.key, selected_link)
@@ -136,8 +160,7 @@ restart = ->
       ).style('marker-end', (edge) ->
         'url(#end-arrow)'
       )
-
-  # add new links
+  # Add new links.
   path.enter()
     .append('svg:path')
       .attr('class', 'link')
@@ -160,35 +183,21 @@ restart = ->
 
         restart()
       )
-
-  # remove old links
+  # Remove old links.
   path.exit().remove()
 
-  # circle (node) group
-  # NB: the function arg is crucial here! nodes are known by id, not by index!
-  circle = circle.data(nodes, (d) ->
-    return d._id
-  )
+  # Bind newly-fetched nodes to circle selection.
+  # NB: Nodes are known by the graph's internal ID, not by d3 index!
+  circleGroup = circleGroup.data(nodes, (d) -> d._id)
 
-  # update existing nodes (reflexive & selected visual states)
-  circle.selectAll('circle')
-      .style('fill', (node) -> nodeColor(node)
-      ).classed('reflexive', (node) ->
-        node.reflexive
-      )
-
-
-  # add new nodes
-  g = circle.enter().append('svg:g')
+  # Add new nodes.
+  g = circleGroup.enter()
+    .append('svg:g')
 
   g.append('svg:circle')
       .attr('class', 'node')
       .attr('r', NODE_RADIUS)
-      .style('fill', (node) -> nodeColor(node)
-      ).classed('reflexive', (node) ->
-        node.reflexive
-        # TODO mouseover/mouseout
-      ).on('mouseover', (node) ->
+      .on('mouseover', (node) ->
         # enlarge target node
         d3.select(this).attr('transform', 'scale(1.1)')
       ).on('mouseout', (node) ->
@@ -221,7 +230,6 @@ restart = ->
 
         restart()
       )
-
   # Show node IDs.
   g.append('svg:text')
       .attr('x', 0)
@@ -230,13 +238,25 @@ restart = ->
       .classed('id', true)
       .attr('fill', NODE_LABEL_COLOR)
 
+  # Update existing nodes.
+  # Note: since we appended to the enter selection, this will be applied to the
+  # new circle elements we just created.
+  circles = circleGroup.selectAll('circle').data(nodes, (node) -> node._id)
+      .style('fill', (node) -> nodeColor(node))
+      # Lighten node if it has no connections.
+      .style('opacity', (node) ->
+        if graph.getAllEdgesOf(node._id).length is 0 then 0.4 else 1
+      )
+      .classed('reflexive', (node) ->
+        node.reflexive
+      )
   # Update displayed mechanisms and IDs.
-  circle.select('.node-label.id').text((node) -> node.label)
+  circleGroup.select('.node-label.id').text((node) -> node.label)
 
-  # remove old nodes
-  circle.exit().remove()
+  # Remove old nodes.
+  circleGroup.exit().remove()
 
-  # Rebind the nodes and links.
+  # Rebind the nodes and links to the force layout.
   force
     .nodes(nodes)
     .links(links)
@@ -293,7 +313,7 @@ keydown = ->
 
   # shift
   if d3.event.keyCode is 16
-    circle.call(force.drag)
+    circleGroup.call(force.drag)
     svg.classed('shiftkey', true)
 
   return if not selected_node and not selected_link
@@ -383,7 +403,7 @@ keyup = ->
   lastKeyDown = -1
   # shift
   if d3.event.keyCode is 16
-    circle
+    circleGroup
         .on('mousedown.drag', null)
         .on('touchstart.drag', null)
     svg.classed('shiftkey', false)
@@ -403,12 +423,6 @@ nearestNeighbor = (node, nodes) ->
 dist = (p0, p1) ->
   Math.sqrt(Math.pow(p1[0] - p0[0], 2) + Math.pow(p1[1] - p0[1], 2))
 
-
-# Set up initial graph.
-graph = new Graph()
-
-nodes = graph.getNodes()
-links = graph.getDrawableEdges()
 
 # init D3 force layout
 force = d3.layout.force()
@@ -432,9 +446,6 @@ force = d3.layout.force()
 #     .on('keyup', keyup)
 
 restart()
-
-
-exports.graph = graph
 
 exports.load = (newGraph) ->
   graph = newGraph

@@ -4,11 +4,11 @@
 network = require './network'
 Chart = require './chart'
 Graph = require './network/graph'
+colors = require './colors'
 
-SENSORS = [0, 1]
-HIDDEN = [2, 3, 4, 5]
-MOTORS = [6, 7]
-FIXED_INDICES = SENSORS.concat(HIDDEN).concat(MOTORS)
+FIXED_INDICES = network.SENSORS
+  .concat(network.HIDDEN)
+  .concat(network.MOTORS)
 
 positions =
  0: {x: 197, y:  88, fixed: true}
@@ -64,7 +64,11 @@ PHI_CHART_SELECTOR = '#phi-chart'
 FITNESS_CHART_SELECTOR = '#fitness-chart'
 NUM_CONCEPTS_CHART_SELECTOR = '#num-concepts-chart'
 
-PHI_RANGE = [0, 1.3]
+FITNESS_COLOR = colors.solarized.red.toString()
+PHI_COLOR = colors.solarized.blue.toString()
+NUM_CONCEPTS_COLOR = colors.solarized.cyan.toString()
+
+PHI_RANGE = [0, 1.25]
 NUM_CONCEPTS_RANGE = [0, 8]
 FITNESS_RANGE = [0, 1]
 MAX_FITNESS = 128
@@ -86,7 +90,7 @@ $.getJSON 'data/generations.json', (generations) ->
       name: 'Fitness'
       bindto: FITNESS_CHART_SELECTOR
       data: (d.fitness for d in generations)
-      color: '#7FBF3F'
+      color: FITNESS_COLOR
       min: FITNESS_RANGE[0]
       max: FITNESS_RANGE[1]
       transform: (fitness) -> fitness / MAX_FITNESS
@@ -94,14 +98,14 @@ $.getJSON 'data/generations.json', (generations) ->
       name: 'Phi'
       bindto: PHI_CHART_SELECTOR
       data: (d.phi for d in generations)
-      color: '#3F3FBF'
+      color: PHI_COLOR
       min: PHI_RANGE[0]
       max: PHI_RANGE[1]
     new Chart
       name: 'Number of Concepts'
       bindto: NUM_CONCEPTS_CHART_SELECTOR
       data: (d.numConcepts for d in generations)
-      color: '#3FBFA5'
+      color: NUM_CONCEPTS_COLOR
       min: NUM_CONCEPTS_RANGE[0]
       max: NUM_CONCEPTS_RANGE[1]
   ]

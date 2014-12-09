@@ -54,7 +54,6 @@ class Chart
     config.data.colors['Shadow'] = '#ccc'
     config.axis.y.min = args.min
     config.axis.y.max = args.max
-    if args.padding? then config.axis.y.padding = args.padding
 
     @_chart = c3.generate(config)
 
@@ -68,7 +67,7 @@ class Chart
     @_update()
 
   clear: =>
-    @_renderedData = [args.name].concat(null for d in args.data)
+    @_renderedData = [@_args.name].concat(null for d in @_args.data)
     @_update()
 
 module.exports = Chart

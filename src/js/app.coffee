@@ -124,18 +124,17 @@ $.getJSON 'data/generations.json', (generations) ->
     frameIndex++
 
   clear = ->
-    console.log "Clearing graphs"
+    for chart in charts
+      chart.clear()
     frameIndex = 0
 
   playAnimation = ->
-    console.log "Playing animation"
     running = true
     finished = false
     displayPauseButton()
     animation = setInterval(animate, SPEED)
 
   pauseAnimation = ->
-    console.log "Pausing animation"
     clearInterval(animation)
     displayPlayButton()
     running = false

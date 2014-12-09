@@ -34,13 +34,16 @@ class Chart
             count: 10
             culling: true
             format: (x) -> x * GENERATION_STEP
+          padding:
+            left: 0
+            right: 0
           label:
             show: true
             text: 'Generation'
             position: 'outer-center'
         y:
           padding:
-            top: 0.1
+            top: 0
             bottom: 0
       legend:
         show: false
@@ -51,6 +54,7 @@ class Chart
     config.data.colors['Shadow'] = '#ccc'
     config.axis.y.min = args.min
     config.axis.y.max = args.max
+    if args.padding? then config.axis.y.padding = args.padding
 
     @_chart = c3.generate(config)
 

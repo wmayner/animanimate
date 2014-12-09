@@ -1,8 +1,8 @@
 'use strict'
 
 # Initialize interface components
-Chart = require './chart'
 network = require './network'
+Chart = require './chart'
 Graph = require './network/graph'
 
 SENSORS = [0, 1]
@@ -47,97 +47,85 @@ connectivityToGraph = (cm) ->
   return graph
 
 
-SPEED = 150
+PLAY_PAUSE_BUTTON_SELECTOR = '#play-pause'
 
-chartWidth = 528
-chartHeight = 150
+displayPlayButton = ->
+  $("#{PLAY_PAUSE_BUTTON_SELECTOR} > span")
+      .removeClass('glyphicon-pause')
+      .addClass('glyphicon-play')
+
+displayPauseButton = ->
+  $("#{PLAY_PAUSE_BUTTON_SELECTOR} > span")
+      .removeClass('glyphicon-play')
+      .addClass('glyphicon-pause')
+
+
+PHI_CHART_SELECTOR = '#phi-chart'
+FITNESS_CHART_SELECTOR = '#fitness-chart'
+NUM_CONCEPTS_CHART_SELECTOR = '#num-concepts-chart'
 
 PHI_RANGE = [0, 1.3]
 NUM_CONCEPTS_RANGE = [0, 8]
 FITNESS_RANGE = [0, 1]
 MAX_FITNESS = 128
 
-PHI_CHART_ID = 'phi-chart'
-FITNESS_CHART_ID = 'fitness-chart'
-NUM_CONCEPTS_CHART_ID = 'num-concepts-chart'
-
-PLAY_PAUSE_BUTTON_SELECTOR = '#play-pause'
-
-scales =
-  numConcepts: d3.scale.linear().domain(NUM_CONCEPTS_RANGE).nice()
-  phi: d3.scale.linear().domain(PHI_RANGE).nice()
-  fitness: d3.scale.linear().domain(FITNESS_RANGE).nice()
-
+SPEED = 150
 
 $(document).ready ->
+  network.load(connectivityToGraph(initialConnectivityMatrix))
 
-  fitnessChart = new Chart(
-    name: 'fitness'
-    element: document.getElementById(FITNESS_CHART_ID)
-    scale: scales.fitness
-    width: chartWidth
-    height: chartHeight
-    color: '#ff0000'
-    transform: (d) -> d / MAX_FITNESS
-  )
-  numConceptsChart = new Chart(
-    name: 'numConcepts'
-    element: document.getElementById(NUM_CONCEPTS_CHART_ID)
-    scale: scales.numConcepts
-    width: chartWidth
-    height: chartHeight
-    color: '#859900'
-  )
-  phiChart = new Chart(
-    name: 'phi'
-    element: document.getElementById(PHI_CHART_ID)
-    scale: scales.phi
-    width: chartWidth
-    height: chartHeight
-    color: '#268bd2'
-  )
- 
+$.getJSON 'data/generations.json', (generations) ->
+
+  running = false
+  finished = false
+  frameIndex = 0
+  animation = undefined
+
+  charts = [
+    new Chart
+      name: 'Fitness'
+      bindto: FITNESS_CHART_SELECTOR
+      data: (d.fitness for d in generations)
+      color: '#7FBF3F'
+      min: FITNESS_RANGE[0]
+      max: FITNESS_RANGE[1]
+      transform: (fitness) -> fitness / MAX_FITNESS
+    new Chart
+      name: 'Phi'
+      bindto: PHI_CHART_SELECTOR
+      data: (d.phi for d in generations)
+      color: '#3F3FBF'
+      min: PHI_RANGE[0]
+      max: PHI_RANGE[1]
+    new Chart
+      name: 'Number of Concepts'
+      bindto: NUM_CONCEPTS_CHART_SELECTOR
+      data: (d.numConcepts for d in generations)
+      color: '#3FBFA5'
+      min: NUM_CONCEPTS_RANGE[0]
+      max: NUM_CONCEPTS_RANGE[1]
+  ]
 
   render = (data) ->
     $('#generation').html(data.generation)
     animat = connectivityToGraph(data.connectivityMatrix)
     network.load(animat)
-    phiChart.load(data)
-    numConceptsChart.load(data)
-    fitnessChart.load(data)
+    for chart in charts
+      chart.load(frameIndex)
     return
 
-  running = false
-  finished = false
-  animation = undefined
-  generations = undefined
-  currentGeneration = 0
-
-  displayPlayButton = ->
-    $("#{PLAY_PAUSE_BUTTON_SELECTOR} > span")
-        .removeClass('glyphicon-pause')
-        .addClass('glyphicon-play')
-
-  displayPauseButton = ->
-    $("#{PLAY_PAUSE_BUTTON_SELECTOR} > span")
-        .removeClass('glyphicon-play')
-        .addClass('glyphicon-pause')
-
   animate = ->
-    if currentGeneration < generations.length
-      render(generations[currentGeneration])
+    if frameIndex < generations.length
+      render(generations[frameIndex])
     else
       clearInterval(animation)
       displayPlayButton()
       finished = true
-    currentGeneration++
+    frameIndex++
 
   clear = ->
     console.log "Clearing graphs"
-    currentGeneration = 0
-    phiChart.clear()
-    numConceptsChart.clear()
-    fitnessChart.clear()
+    frameIndex = 0
 
   playAnimation = ->
     console.log "Playing animation"
@@ -152,14 +140,11 @@ $(document).ready ->
     displayPlayButton()
     running = false
 
-  $.getJSON 'data/generations.json', (json) ->
-    generations = json
-    network.load(connectivityToGraph(initialConnectivityMatrix))
-    $(PLAY_PAUSE_BUTTON_SELECTOR).mouseup ->
-      if running and not finished
-        pauseAnimation()
-      else if finished
-        clear()
-        playAnimation()
-      else
-        playAnimation()
+  $(PLAY_PAUSE_BUTTON_SELECTOR).mouseup ->
+    if running and not finished
+      pauseAnimation()
+    else if finished
+      clear()
+      playAnimation()
+    else
+      playAnimation()

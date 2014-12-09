@@ -2,67 +2,69 @@
 # chart/index.coffee
 ###
 
-NUMBER_OF_GENERATIONS = 59904
 GENERATION_STEP = 512
 
 class Chart
   constructor: (args) ->
-    @args = args
-    @graph = @_init(args)
-
-  _init: (args) ->
-    graph = new Rickshaw.Graph(
-      element: args.element
-      renderer: 'line'
-      width: args.width
-      height: args.height
-      min: 0
-      max: 1
-      series: [
-        {
-          name: args.name
-          color: args.color
-          data: []
-          scale: args.scale
-        }
-      ]
+    @_args = args
+    @_renderedData = [args.name].concat(null for d in args.data)
+    @_shadowData = ['shadow'].concat(
+      (if args.transform? then args.data.map(args.transform) else args.data)
     )
+    config =
+      bindto: args.bindto
+      transition:
+        duration: 0
+      point:
+        r: 0
+        focus:
+          expand:
+            r: 7
+            enabled:
+              true
+      data:
+        colors: {}
+        columns: [
+          @_shadowData
+          @_renderedData
+        ]
+      axis:
+        x:
+          tick:
+            count: 10
+            culling: true
+            format: (x) -> x * GENERATION_STEP
+          label:
+            show: true
+            text: 'Generation'
+            position: 'outer-center'
+        y:
+          padding:
+            top: 0.1
+            bottom: 0
+      legend:
+        show: false
+      grid:
+        y:
+          show: false
+    config.data.colors[args.name] = args.color
+    config.data.colors['shadow'] = '#ccc'
+    config.axis.y.min = args.min
+    config.axis.y.max = args.max
 
-    graph.addData = (d) =>
-      graph.series[0].data.push(
-        x: graph.series[0].data.length + 1
-        y: (if @args.transform? then args.transform(d[args.name]) else d[args.name])
-      )
+    @_chart = c3.generate(config)
 
-    xAxis = new Rickshaw.Graph.Axis.X(
-      graph: graph
-      orientation: 'top'
-      tickSize: 5
-      tickFormat: (n) ->
-        if n < 0 then null else n * GENERATION_STEP
-    )
-    yAxis = new Rickshaw.Graph.Axis.Y.Scaled(
-      graph: graph
-      grid: true
-      orientation: 'right'
-      scale: args.scale
-      tickSize: 5
-      tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-    )
-    hoverDetail = new Rickshaw.Graph.HoverDetail(
-      graph: graph
-    )
-    graph.render()
-    return graph
+  _update: =>
+    @_chart.load(columns: [@_shadowData, @_renderedData])
 
+  load: (dataIndex) =>
+    d = @_args.data[dataIndex]
+    y = (if @_args.transform? then @_args.transform(d) else d)
+    @_renderedData[dataIndex + 1] = y
+    @_update()
 
   clear: =>
-    $(@args.element).html('')
-    @graph = @_init(@args)
-    @graph.render()
-
-  load: (data) =>
-    @graph.addData(data)
-    @graph.render()
+    @_renderedData = [args.name].concat(null for d in args.data)
+    @_update()
 
 module.exports = Chart

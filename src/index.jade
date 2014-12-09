@@ -11,8 +11,8 @@ head
   // link(href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css', rel='stylesheet', type='text/css')
   link(href='bower_components/bootstrap/dist/css/bootstrap.min.css', rel='stylesheet', type='text/css')
 
-  // link(href='bower_components/rickshaw/rickshaw.min.css', rel='stylesheet', type='text/css')
-  link(href='bower_components/rickshaw/rickshaw.css', rel='stylesheet', type='text/css')
+  // TODO load minified versions
+  link(href='bower_components/c3/c3.css', rel='stylesheet', type='text/css')
 
   link(href='css/app.css', rel='stylesheet', type='text/css')
 body
@@ -36,20 +36,15 @@ body
               #network-container.module-canvas
       .col-lg-6
         #chart-module.module
-          .row.clearfix.centered
-            .col-centered
-              h2.module-title Fitness
-              #fitness-chart-container
-                #fitness-chart.chart.module-canvas
-                #fitness-legend
-              h2.module-title Number of Concepts
-              #num-concepts-chart-container
-                #num-concepts-chart.chart.module-canvas
-                #num-concepts-legend
-              h2.module-title Phi
-              #phi-chart-container
-                #phi-chart.chart.module-canvas
-                #phi-legend
+          h2.module-title Fitness
+          #fitness-chart-container.chart-container
+            #fitness-chart.chart.module-canvas
+          h2.module-title Phi
+          #phi-chart-container.chart-container
+            #phi-chart.chart.module-canvas
+          h2.module-title Number of Concepts
+          #num-concepts-chart-container.chart-container
+            #num-concepts-chart.chart.module-canvas
               
 
   // Online/Offline
@@ -60,8 +55,9 @@ body
   // script(src='//cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.js')
   script(src='bower_components/d3/d3.min.js')
 
-  script(src='bower_components/rickshaw/rickshaw.js')
-  // script(src='bower_components/rickshaw/rickshaw.min.js')
+  // TODO get minified versions
+  // Online/Offline
+  script(src='bower_components/c3/c3.js')
 
   script(src='js/app.js')
 

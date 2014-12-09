@@ -8,7 +8,7 @@ class Chart
   constructor: (args) ->
     @_args = args
     @_renderedData = [args.name].concat(null for d in args.data)
-    @_shadowData = ['shadow'].concat(
+    @_shadowData = ['Shadow'].concat(
       (if args.transform? then args.data.map(args.transform) else args.data)
     )
     config =
@@ -48,7 +48,7 @@ class Chart
         y:
           show: false
     config.data.colors[args.name] = args.color
-    config.data.colors['shadow'] = '#ccc'
+    config.data.colors['Shadow'] = '#ccc'
     config.axis.y.min = args.min
     config.axis.y.max = args.max
 

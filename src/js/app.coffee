@@ -48,6 +48,8 @@ connectivityToGraph = (cm) ->
 
 
 PLAY_PAUSE_BUTTON_SELECTOR = '#play-pause'
+GENERATION_SLIDER_SELECTOR = '#generation-slider-container > input.slider'
+SPEED_SLIDER_SELECTOR = '#speed-slider-container > input.slider'
 
 displayPlayButton = ->
   $("#{PLAY_PAUSE_BUTTON_SELECTOR} > span")
@@ -73,9 +75,31 @@ NUM_CONCEPTS_RANGE = [0, 8]
 FITNESS_RANGE = [0, 1]
 MAX_FITNESS = 128
 
-SPEED = 150
+GENERATION_STEP = 512
+
+animationSpeed = 150
 
 $(document).ready ->
+  # Initialize animation slider.
+  $(GENERATION_SLIDER_SELECTOR).slider(
+    id: 'generation-slider'
+    min: 0
+    max: 117
+    step: 1
+    value: 0
+    formatter: (value) -> "Generation #{value * GENERATION_STEP}"
+  )
+  $(SPEED_SLIDER_SELECTOR).slider(
+    id: 'speed-slider'
+    reversed: true
+    min: 0
+    max: 1000
+    step: 100
+    value: animationSpeed
+    formatter: (value) ->
+      "Speed: #{d3.round(10 - (value / 100), 0)}"
+  )
+  # Initialize network.
   network.load(connectivityToGraph(initialConnectivityMatrix))
 
 $.getJSON 'data/generations.json', (generations) ->
@@ -94,6 +118,7 @@ $.getJSON 'data/generations.json', (generations) ->
       min: FITNESS_RANGE[0]
       max: FITNESS_RANGE[1]
       transform: (fitness) -> fitness / MAX_FITNESS
+      xTickFormat: (x) -> d3.round(x * GENERATION_STEP, 0)
     new Chart
       name: 'Phi'
       bindto: PHI_CHART_SELECTOR
@@ -101,6 +126,7 @@ $.getJSON 'data/generations.json', (generations) ->
       color: PHI_COLOR
       min: PHI_RANGE[0]
       max: PHI_RANGE[1]
+      xTickFormat: (x) -> d3.round(x * GENERATION_STEP, 0)
     new Chart
       name: 'Number of Concepts'
       bindto: NUM_CONCEPTS_CHART_SELECTOR
@@ -108,9 +134,16 @@ $.getJSON 'data/generations.json', (generations) ->
       color: NUM_CONCEPTS_COLOR
       min: NUM_CONCEPTS_RANGE[0]
       max: NUM_CONCEPTS_RANGE[1]
+      xTickFormat: (x) -> d3.round(x * GENERATION_STEP, 0)
   ]
 
-  render = (data) ->
+  updateFrameIndex = (newFrameIndex) ->
+    frameIndex = newFrameIndex
+    $(GENERATION_SLIDER_SELECTOR).slider('setValue', frameIndex)
+    return frameIndex
+
+  render = (frameIndex) ->
+    data = generations[frameIndex]
     $('#generation').html(data.generation)
     animat = connectivityToGraph(data.connectivityMatrix)
     network.load(animat)
@@ -120,28 +153,43 @@ $.getJSON 'data/generations.json', (generations) ->
 
   animate = ->
     if frameIndex < generations.length
-      render(generations[frameIndex])
+      render(frameIndex)
     else
-      clearInterval(animation)
+      clearTimeout(animation)
       displayPlayButton()
       finished = true
-    frameIndex++
+    updateFrameIndex(frameIndex + 1)
+
+  handleTick = ->
+    animate()
+    animation = setTimeout(handleTick, animationSpeed)
 
   clear = ->
     for chart in charts
       chart.clear()
-    frameIndex = 0
+    updateFrameIndex(0)
 
   playAnimation = ->
     running = true
     finished = false
     displayPauseButton()
-    animation = setInterval(animate, SPEED)
+    handleTick(animationSpeed)
 
   pauseAnimation = ->
-    clearInterval(animation)
+    clearTimeout(animation)
     displayPlayButton()
     running = false
+
+  $(SPEED_SLIDER_SELECTOR)
+    .on 'slide', (e) ->
+      animationSpeed = e.value
+    .data 'slider'
+
+  $(GENERATION_SLIDER_SELECTOR)
+    .on 'slide', (e) ->
+      updateFrameIndex(e.value)
+      render(frameIndex)
+    .data 'slider'
 
   $(PLAY_PAUSE_BUTTON_SELECTOR).mouseup ->
     if running and not finished

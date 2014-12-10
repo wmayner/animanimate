@@ -10,5 +10,6 @@
     "jquery": "1.10.2",
     "d3": "3.x",
     "c3": "~0.4.7"
+    "seiyria-bootstrap-slider": "~4.3.0"
   }
 }

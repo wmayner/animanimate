@@ -12,25 +12,35 @@ head
   link(href='bower_components/bootstrap/dist/css/bootstrap.min.css', rel='stylesheet', type='text/css')
 
   // TODO load minified versions
+  link(href='bower_components/seiyria-bootstrap-slider/css/bootstrap-slider.css', rel='stylesheet', type='text/css')
+
+  // TODO load minified versions
   link(href='bower_components/c3/c3.css', rel='stylesheet', type='text/css')
 
   link(href='css/app.css', rel='stylesheet', type='text/css')
 body
   .container
-    .row.clearfix.row-centered
-      .col-centered
+    .row.clearfix
+      .col-lg-12
         h1.page-header.title Evolving Animats
         .animation-controls
-          .btn-group
-            button#play-pause.btn.btn-large.btn-default
-              span.glyphicon.glyphicon-play
+          .row.clearfix.row-centered
+            .col-centered
+              span.control-label Speed:
+              #speed-slider-container
+                input.slider.slider-horizontal(type='text')
+              button#play-pause.btn.btn-large.btn-default
+                span.glyphicon.glyphicon-play
+              span.control-label Generation:
+              #generation-slider-container
+                input.slider.slider-horizontal(type='text')
         .generation-label
           p Generation 
             span#generation 0
     .row.clearfix
       .col-lg-6
         #network-module.module
-          .row.clearfix.centered
+          .row.clearfix.row-centered
             .col-centered
               h2.module-title Animat
               #network-container.module-canvas
@@ -46,10 +56,12 @@ body
           #num-concepts-chart-container.chart-container
             #num-concepts-chart.chart.module-canvas
               
-
   // Online/Offline
   // script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
   script(src='bower_components/jquery/jquery.min.js')
+
+  // TODO get minified versions
+  script(src='bower_components/seiyria-bootstrap-slider/js/bootstrap-slider.js')
 
   // Online/Offline
   // TODO get minified versions

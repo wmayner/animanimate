@@ -238,10 +238,13 @@ restart = ->
       .classed('id', true)
       .attr('fill', NODE_LABEL_COLOR)
 
+  # Bind the data to the actual circle elements.
+  circles = circleGroup.selectAll('circle').data(nodes, (node) -> node._id)
+
   # Update existing nodes.
   # Note: since we appended to the enter selection, this will be applied to the
   # new circle elements we just created.
-  circles = circleGroup.selectAll('circle').data(nodes, (node) -> node._id)
+  circles
       .style('fill', (node) -> nodeColor(node))
       # Lighten node if it has no connections.
       .style('opacity', (node) ->

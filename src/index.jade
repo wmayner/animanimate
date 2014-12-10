@@ -26,14 +26,16 @@ body
         .animation-controls
           .row.clearfix.row-centered
             .col-centered
-              span.control-label Speed:
-              #speed-slider-container
-                input.slider.slider-horizontal(type='text')
-              button#play-pause.btn.btn-large.btn-default
-                span.glyphicon.glyphicon-play
-              span.control-label Generation:
-              #generation-slider-container
-                input.slider.slider-horizontal(type='text')
+              .control-group
+                span.control-label Speed:
+                #speed-slider-container
+                  input.slider.slider-horizontal(type='text')
+                button#play-pause.btn.btn-large.btn-default
+                  span.glyphicon.glyphicon-play
+              .control-group
+                span.control-label Generation:
+                #generation-slider-container
+                  input.slider.slider-horizontal(type='text')
         .generation-label
           p Generation 
             span#generation 0

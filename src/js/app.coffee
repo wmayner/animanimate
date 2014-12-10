@@ -105,7 +105,6 @@ $(document).ready ->
 $.getJSON 'data/generations.json', (generations) ->
 
   running = false
-  finished = false
   frameIndex = 0
   animation = undefined
 
@@ -151,13 +150,14 @@ $.getJSON 'data/generations.json', (generations) ->
       chart.load(frameIndex)
     return
 
+  finished = -> frameIndex >= generations.length
+
   animate = ->
-    if frameIndex < generations.length
+    if not finished()
       render(frameIndex)
     else
       clearTimeout(animation)
       displayPlayButton()
-      finished = true
     updateFrameIndex(frameIndex + 1)
 
   handleTick = ->
@@ -171,7 +171,6 @@ $.getJSON 'data/generations.json', (generations) ->
 
   playAnimation = ->
     running = true
-    finished = false
     displayPauseButton()
     handleTick(animationSpeed)
 
@@ -185,16 +184,19 @@ $.getJSON 'data/generations.json', (generations) ->
       animationSpeed = e.value
     .data 'slider'
 
-  $(GENERATION_SLIDER_SELECTOR)
-    .on 'slide', (e) ->
+  handleSlider = (e) ->
+      pauseAnimation()
       updateFrameIndex(e.value)
       render(frameIndex)
+  $(GENERATION_SLIDER_SELECTOR)
+    .on 'slide', handleSlider
+    .on 'slideStop', handleSlider
     .data 'slider'
 
   $(PLAY_PAUSE_BUTTON_SELECTOR).mouseup ->
-    if running and not finished
+    if running and not finished()
       pauseAnimation()
-    else if finished
+    else if finished()
       clear()
       playAnimation()
     else

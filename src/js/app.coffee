@@ -170,9 +170,10 @@ $.getJSON 'data/generations.json', (generations) ->
     updateFrameIndex(0)
 
   playAnimation = ->
-    running = true
-    displayPauseButton()
-    handleTick(animationSpeed)
+    unless running
+      running = true
+      displayPauseButton()
+      handleTick(animationSpeed)
 
   pauseAnimation = ->
     clearTimeout(animation)

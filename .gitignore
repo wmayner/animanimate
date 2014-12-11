@@ -4,3 +4,4 @@ lib
 app/js/*
 app/css/*
 app/index.html
+app/data/*

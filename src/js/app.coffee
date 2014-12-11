@@ -4,11 +4,14 @@
 Chart = require './chart'
 network = require './network'
 Graph = require './network/graph'
+environment = require './environment'
+Game = require './environment/game'
 
 SENSORS = [0, 1]
 HIDDEN = [2, 3, 4, 5]
 MOTORS = [6, 7]
 FIXED_INDICES = SENSORS.concat(HIDDEN).concat(MOTORS)
+CURRENT_GENERATION = 59904
 
 positions =
  0: {x: 197, y:  88, fixed: true}
@@ -46,72 +49,47 @@ connectivityToGraph = (cm) ->
         graph.addEdge(j, i)
   return graph
 
+# locationToBlocks = (ts, blockSize) ->
+#   block = new Blocks()
+#   for i in blockSize
+#       block.addBox(positions[i])   
+#   return block
 
 SPEED = 150
 
-chartWidth = 528
-chartHeight = 150
-
-PHI_RANGE = [0, 1.3]
-NUM_CONCEPTS_RANGE = [0, 8]
-FITNESS_RANGE = [0, 1]
-MAX_FITNESS = 128
-
-PHI_CHART_ID = 'phi-chart'
-FITNESS_CHART_ID = 'fitness-chart'
-NUM_CONCEPTS_CHART_ID = 'num-concepts-chart'
-
 PLAY_PAUSE_BUTTON_SELECTOR = '#play-pause'
-
-scales =
-  numConcepts: d3.scale.linear().domain(NUM_CONCEPTS_RANGE).nice()
-  phi: d3.scale.linear().domain(PHI_RANGE).nice()
-  fitness: d3.scale.linear().domain(FITNESS_RANGE).nice()
-
 
 $(document).ready ->
 
-  fitnessChart = new Chart(
-    name: 'fitness'
-    element: document.getElementById(FITNESS_CHART_ID)
-    scale: scales.fitness
-    width: chartWidth
-    height: chartHeight
-    color: '#ff0000'
-    transform: (d) -> d / MAX_FITNESS
-  )
-  numConceptsChart = new Chart(
-    name: 'numConcepts'
-    element: document.getElementById(NUM_CONCEPTS_CHART_ID)
-    scale: scales.numConcepts
-    width: chartWidth
-    height: chartHeight
-    color: '#859900'
-  )
-  phiChart = new Chart(
-    name: 'phi'
-    element: document.getElementById(PHI_CHART_ID)
-    scale: scales.phi
-    width: chartWidth
-    height: chartHeight
-    color: '#268bd2'
-  )
- 
+  render = (ts, direction) ->
+     # set block and animat to right position
+    game = new Game() #where?
+    game.moveBlock([ts, ])
+    game.addBlock([ts, 0], blockSize) 
+    # animat = connectivityToGraph(data.connectivityMatrix)
+    # environment.load(animat)
+    return
 
-  render = (data) ->
-    $('#generation').html(data.generation)
-    animat = connectivityToGraph(data.connectivityMatrix)
-    network.load(animat)
-    phiChart.load(data)
-    numConceptsChart.load(data)
-    fitnessChart.load(data)
+  render2 = (data, ts) ->
+    $('#time-step').html(ts+1)
+    # color nodes according to on/off
+    state = data.lifeTable[ts]
+    for i in FIXED_INDICES
+      node = currentAnimat.getNodeByIndex(i)
+      currentAnimat.setState(node, state[i])
+    network.load(currentAnimat)
     return
 
   running = false
   finished = false
   animation = undefined
   generations = undefined
+  trials = undefined
+  currentAnimat = undefined
   currentGeneration = 0
+  currentTrial = 0
+  animationCounter = 0
+  timeStepInterval = 0
 
   displayPlayButton = ->
     $("#{PLAY_PAUSE_BUTTON_SELECTOR} > span")
@@ -124,21 +102,40 @@ $(document).ready ->
         .addClass('glyphicon-pause')
 
   animate = ->
-    if currentGeneration < generations.length
-      render(generations[currentGeneration])
+    # if currentGeneration < generations.length
+    #   render(generations[currentGeneration])
+    # else
+    #   clearInterval(animation)
+    #   displayPlayButton()
+    #   finished = true
+    # currentGeneration++
+
+    if animationCounter < trials.Trial.length*timeStepInterval
+      $('#trial').html(currentTrial)
+      timeStep = animationCounter%timeStepInterval
+      game = new Game
+      if timeStep == 0
+        game.addBlock([timeStep, 0], trials.blockSize[animationCounter])  
+        #set animat position
+      else
+        direction = currentTrial%16
+        #game.moveBlock(direction)
+        #render(trials.Trial[currentTrial], timeStep, trials.blockSize[animationCounter], direction)
+      render2(trials.Trial[currentTrial], timeStep)
+      if animationCounter%timeStepInterval == 0 
+        currentTrial++
     else
       clearInterval(animation)
       displayPlayButton()
       finished = true
-    currentGeneration++
+    animationCounter++
 
   clear = ->
     console.log "Clearing graphs"
     currentGeneration = 0
-    phiChart.clear()
-    numConceptsChart.clear()
-    fitnessChart.clear()
+    currentTrial = 0
 
+    
   playAnimation = ->
     console.log "Playing animation"
     running = true
@@ -152,9 +149,11 @@ $(document).ready ->
     displayPlayButton()
     running = false
 
-  $.getJSON 'data/generations.json', (json) ->
-    generations = json
-    network.load(connectivityToGraph(initialConnectivityMatrix))
+  $.getJSON 'data/AnimatBlockTrials32_59904.json', (json) ->
+    trials = json
+    timeStepInterval = trials.Trial[1].lifeTable.length
+    currentAnimat = connectivityToGraph(trials.connectivityMatrix)
+    network.load(currentAnimat)
     $(PLAY_PAUSE_BUTTON_SELECTOR).mouseup ->
       if running and not finished
         pauseAnimation()

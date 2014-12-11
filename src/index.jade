@@ -24,32 +24,29 @@ body
           .btn-group
             button#play-pause.btn.btn-large.btn-default
               span.glyphicon.glyphicon-play
-        .generation-label
-          p Generation 
-            span#generation 0
+        // generation changed to trial
     .row.clearfix
+      .col-lg-6
+        .trial-label
+          p Trial 
+            span#trial 0
+      .col-lg-6    
+        .time-step-label
+          p Time Step 
+            span#time-step 0    
+    .row.clearfix
+      .col-lg-6
+        #environment-module.module
+          .row.clearfix.centered
+            .col-centered
+              h2.module-title Environment
+              #environment-container.module-canvas
       .col-lg-6
         #network-module.module
           .row.clearfix.centered
             .col-centered
               h2.module-title Animat
               #network-container.module-canvas
-      .col-lg-6
-        #chart-module.module
-          .row.clearfix.centered
-            .col-centered
-              h2.module-title Fitness
-              #fitness-chart-container
-                #fitness-chart.chart.module-canvas
-                #fitness-legend
-              h2.module-title Number of Concepts
-              #num-concepts-chart-container
-                #num-concepts-chart.chart.module-canvas
-                #num-concepts-legend
-              h2.module-title Phi
-              #phi-chart-container
-                #phi-chart.chart.module-canvas
-                #phi-legend
               
 
   // Online/Offline

@@ -123,6 +123,7 @@ update = ->
   path.enter()
     .append 'svg:path'
       .attr 'class', 'link'
+      .attr 'stroke', colors.link.line
       .style 'marker-start', (edge) ->
         (if edge.bidirectional then 'url(#start-arrow)' else '')
       .style 'marker-end', (edge) ->

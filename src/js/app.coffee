@@ -180,18 +180,20 @@ $.getJSON 'data/generations.json', (generations) ->
     displayPlayButton()
     running = false
 
+  handleSpeedSlider = (e) ->
+    animationSpeed = e.value
   $(SPEED_SLIDER_SELECTOR)
-    .on 'slide', (e) ->
-      animationSpeed = e.value
+    .on 'slide', handleSpeedSlider
+    .on 'slideStop', handleSpeedSlider
     .data 'slider'
 
-  handleSlider = (e) ->
+  handleGenerationSlider = (e) ->
       pauseAnimation()
       updateFrameIndex(e.value)
       render(frameIndex)
   $(GENERATION_SLIDER_SELECTOR)
-    .on 'slide', handleSlider
-    .on 'slideStop', handleSlider
+    .on 'slide', handleGenerationSlider
+    .on 'slideStop', handleGenerationSlider
     .data 'slider'
 
   $(PLAY_PAUSE_BUTTON_SELECTOR).mouseup ->

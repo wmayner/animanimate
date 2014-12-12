@@ -102,7 +102,7 @@ $(document).ready ->
   # Initialize network.
   network.load(connectivityToGraph(initialConnectivityMatrix))
 
-$.getJSON 'data/generations.json', (generations) ->
+$.getJSON 'data/Animat15.json', (generations) ->
 
   running = false
   frameIndex = 0

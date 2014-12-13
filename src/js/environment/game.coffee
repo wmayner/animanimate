@@ -6,18 +6,30 @@ utils = require './utils'
 
 class Block
 
-  constructor: (@position, @width) ->
+  constructor: (@position, @width, @_id) ->
 
 class Animat
 
   constructor: (@position) ->
+    @isAnimat = true
+    @width = 3
 
 class Game
 
-  constructor: ->
-    @_grid = [36,16]
+  constructor: (@trial) -> 
+    @_newBlockId = 0
+    @_dimensions = [36,16]
+    @_direction = (if (@trial.trialNum // 16) % 2 then 'left' else 'right')
+    @_timeCounter = 0
     @_blocks = {}
-    @_animat = new Animat({x: 35, y: 7})
+    @_animat = new Animat({x: 0, y: 35})
+
+    width = 3
+    @addBlock({x: 0, y: 0}, width)
+
+  getDimensions: -> @_dimensions
+
+  getAnimat: -> @_animat
 
   getNewBlockId: ->
     id = @_newBlockId
@@ -26,25 +38,49 @@ class Game
 
   addBlock: (position, width) ->
     ###
-    _Returns:_ the block object. Feel free to attach additional custom properties
-    on it for graph algorithms' needs. **Undefined if block id already exists**,
-    as to avoid accidental overrides.
+    _Returns:_ the block object.
     ###
-    block =
-      _id: @getNewBlockId()
+    block = new Block(position, width, @getNewBlockId())
     @numBlocks++
     @_blocks[block._id] = block
     return block
 
-  moveBlock: (direction) ->
+  update: ->
+    for id, block of @_blocks
+      @moveBlock block, 'down'
+      @moveBlock block, @_direction
+    @moveAnimat @_animat, 
+    @timeCounter++
+
+  calcAnimatDirection: ->
+    motorStates = @trial.lifeTable[@_timeCounter][-2...]
+    animatDirection = motorStates[0] + motorStates[1]
+    return animatDirection
+
+  moveBlock: (block, direction) -> 
     ###
-    _Returns:_ the block object. Moved one step to the left or right, and one step down.
+    _Returns:_ the block object, moved one step to the left or right, and one step down.
     ###
-    if direction == 0
-      block.position[1]++
-    else
-      block.position[1]--
-    block.position[0]++
+    switch direction
+      when 'right'
+        block.position.x++
+      when 'left'
+        block.position.x--
+      when 'up'
+        block.position.y--
+      when 'down'
+        block.position.y++  
+    return
+
+   moveAnimat: (@_animat, direction) -> 
+    ###
+    _Returns:_ the block object, moved one step to the left or right, and one step down.
+    ###
+    switch direction
+      when 'right'
+        block.position.x++
+      when 'left'
+        block.position.x--
     return
 
   getBlock: (id) ->

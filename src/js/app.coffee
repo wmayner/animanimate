@@ -113,12 +113,13 @@ $(document).ready ->
     if animationCounter < trials.Trial.length*timeStepInterval
       $('#trial').html(currentTrial)
       timeStep = animationCounter%timeStepInterval
-      game = new Game
       if timeStep == 0
-        game.addBlock([timeStep, 0], trials.blockSize[animationCounter])  
+        console.log trials.Trial[currentTrial]
+        game = new Game(trials.Trial[currentTrial])
+        environment.load(game)
         #set animat position
       else
-        direction = currentTrial%16
+        environment.update()
         #game.moveBlock(direction)
         #render(trials.Trial[currentTrial], timeStep, trials.blockSize[animationCounter], direction)
       render2(trials.Trial[currentTrial], timeStep)

@@ -1,8 +1,8 @@
 ###
-# network/index.coffee
+# environment/index.coffee
 ###
 
-Block = require './game'
+Game = require './game'
 colors = require '../colors'
 
 
@@ -14,26 +14,25 @@ width = 528
 MAXIMUM_NODES = 5
 NODE_RADIUS = 25
 
-ENVIRONMENT_BLOCK_WIDTH = 16
-ENVIRONMENT_BLOCK_HEIGHT = 36
+ENVIRONMENT_WIDTH = 16
+ENVIRONMENT_HEIGHT = 36
 
-BLOCK_WIDTH = width/ENVIRONMENT_BLOCK_WIDTH
-BLOCK_HEIGHT = height/ENVIRONMENT_BLOCK_HEIGHT
-BLOCK_COLOR = d3.rgb 100, 200, 0
+GRID_WIDTH = width/ENVIRONMENT_WIDTH
+GRID_HEIGHT = height/ENVIRONMENT_HEIGHT
+ANIMAT_COLOR = d3.rgb 200, 200, 0
+BLOCK_COLOR = d3.rgb 100, 100, 0
 
+game = undefined
 # Helpers
 # =====================================================================
 
 # Color boxes based on role in the animat.
-nodeColor = (node) ->
-  if node.index in exports.SENSORS
-    return colors.node.sensor
-  else if node.index in exports.HIDDEN
-    return colors.node.hidden
-  else if node.index in exports.MOTORS
-    return colors.node.motor
+blockColor = (block) ->
+  if block.isAnimat
+    return ANIMAT_COLOR
   else
-    return colors.node.other
+    return BLOCK_COLOR
+  
 
 # =====================================================================
 
@@ -44,99 +43,63 @@ svg = d3.select CONTAINER_SELECTOR
     .attr 'height', height
     .attr 'align', 'center'
 
-rectGroup = svg
+rects = svg
   .append 'svg:g'
-    .selectAll 'g'
+    .selectAll 'rect'
 
-
-# Update force layout (called automatically each iteration).
-tick = ->
-  # # Draw directed edges with proper padding from node centers.
-  # path.attr "d", (edge) ->
-  #   deltaX = edge.target.x - edge.source.x
-  #   deltaY = edge.target.y - edge.source.y
-  #   dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
-  #   normX = deltaX / dist
-  #   normY = deltaY / dist
-  #   sourcePadding = (if edge.bidirectional then NODE_RADIUS + 5 else NODE_RADIUS)
-  #   targetPadding = NODE_RADIUS + 5
-  #   sourceX = edge.source.x + (sourcePadding * normX)
-  #   sourceY = edge.source.y + (sourcePadding * normY)
-  #   targetX = edge.target.x - (targetPadding * normX)
-  #   targetY = edge.target.y - (targetPadding * normY)
-  #   return "M#{sourceX},#{sourceY}L#{targetX},#{targetY}"
-  rectGroup.attr 'transform', (node) ->
-    "translate(#{node.x},#{node.y})"
-  return
-
-
-# Update block (call when needed).
+# Update game (call when needed).
 # =====================================================================
 update = ->
 
-  # Update the node and edge list.
-  #boxes = block.getBoxes()
+  # Update the block list.
+  blocks = game.getBlocks().concat(game.getAnimat())
+  console.log blocks
+  # Bind newly-fetched boxes to rects selection.
+  rects = rects.data blocks
 
-  # Bind newly-fetched boxes to rect selection.
-  # NB: Boxes are known by the block's internal ID, not by d3 index!
-  rectGroup = rectGroup.data blocks
-
-
-  # Add new boxes.
-  g = rectGroup.enter()
-    .append 'svg:g'
-
-  g.append 'svg:rect'
-      .attr 'class', 'node'
-      .attr 'width', BLOCK_WIDTH
-      .attr 'height', BLOCK_HEIGHT
+  # Add new blocks.
+  rects.enter()
+    .append 'svg:rect'
+      .attr 'class', 'block'
+      .attr 'width', (block) -> 
+        console.log block.width
+        block.width * GRID_WIDTH
+      .attr 'height', GRID_HEIGHT
       .on 'mouseover', (node) ->
-        # enlarge target node
+        # Enlarge target block
         d3.select(this).attr 'transform', 'scale(1.1)'
       .on 'mouseout', (node) ->
-        # unenlarge target node
+        # Unenlarge target block
         d3.select(this).attr 'transform', ''
 
-  # Bind the data to the actual rect elements.
-  rects = rectGroup.selectAll 'rect'
-    .data boxes, (node) -> node._id
-
-  # Update existing boxes.
+  # Update existing blocks.
   # Note: since we appended to the enter selection, this will be applied to the
   # new rect elements we just created.
   rects
-      .attr 'x', (block) -> block.position[0]
-      .attr 'y', (block) -> block.position[1]
-      .style 'fill', (node) -> BLOCK_COLOR
+      .attr 'x', (block) -> block.position.x * GRID_WIDTH
+      .attr 'y', (block) -> block.position.y * GRID_HEIGHT
+      .style 'fill', blockColor
       # Lighten node if it has no connections.
-      .style 'opacity', (node) ->
+      .style 'opacity', (block) ->
         #if block.getAllEdgesOf(node._id).length is 0 then 0.4 else 1
-        if node.on then 1 else 0.2
-      .classed 'reflexive', (node) ->
-        node.reflexive
-  # Update displayed mechanisms and IDs.
-  rectGroup.select '.node-label.id'
-    .text (node) -> node.label
+        if block.on then 0.2 else 1
 
-  # Remove old boxes.
-  rectGroup.exit().remove()
+ # Remove old boxes.
+  rects.exit().remove()
 # =====================================================================
 
 
-# Set up initial block.
-block = new Block()
-boxes = block.getBlocks()
-# Initialize D3 force layout.
-blocks = [
-  {
-    position: [0,0]
-  }
-]
-update()
+# Set up initial game.
+# game = new Game()
+# update()
 
 
-exports.load = (newBlock) ->
-  block = newBlock
+exports.load = (newGame) ->
+  game = newGame
+  update()
+
+exports.update = ->
+  game.update()
   update()
 
 

@@ -111,25 +111,24 @@ $(document).ready ->
     # currentGeneration++
 
     if animationCounter < trials.Trial.length*timeStepInterval
-      $('#trial').html(currentTrial)
+      $('#trial').html(currentTrial+1)
       timeStep = animationCounter%timeStepInterval
       if timeStep == 0
         console.log trials.Trial[currentTrial]
-        game = new Game(trials.Trial[currentTrial])
+        game = new Game(trials.Trial[currentTrial], trials.blockSize[currentTrial])
         environment.load(game)
         #set animat position
       else
         environment.update()
-        #game.moveBlock(direction)
         #render(trials.Trial[currentTrial], timeStep, trials.blockSize[animationCounter], direction)
       render2(trials.Trial[currentTrial], timeStep)
-      if animationCounter%timeStepInterval == 0 
-        currentTrial++
     else
       clearInterval(animation)
       displayPlayButton()
       finished = true
     animationCounter++
+    if animationCounter%timeStepInterval == 0 
+      currentTrial++
 
   clear = ->
     console.log "Clearing graphs"

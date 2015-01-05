@@ -7,6 +7,7 @@ utils = require './utils'
 class Block
 
   constructor: (@position, @width, @_id) ->
+    @isWrapperBlock = false
 
 class Animat
 
@@ -16,15 +17,16 @@ class Animat
 
 class Game
 
-  constructor: (@trial) -> 
+  constructor: (@trial, @blockSize) -> 
     @_newBlockId = 0
     @_dimensions = [36,16]
-    @_direction = (if (@trial.trialNum // 16) % 2 then 'left' else 'right')
+    @_direction = (if ((@trial.trialNum - 1) // @_dimensions[1]) % 2 then 'right' else 'left')
     @_timeCounter = 0
     @_blocks = {}
-    @_animat = new Animat({x: 0, y: 35})
-
-    width = 3
+    #Fix this. Animat should be at position 15 on trial 36
+    @_animat = new Animat({x: (@trial.trialNum-1) % @_dimensions[1], y: 35})
+    console.log @trial.trialNum
+    width = @blockSize
     @addBlock({x: 0, y: 0}, width)
 
   getDimensions: -> @_dimensions
@@ -36,26 +38,51 @@ class Game
     @_newBlockId++
     return id
 
-  addBlock: (position, width) ->
+  addBlock: (position, width, wrapperBlock) ->
     ###
     _Returns:_ the block object.
     ###
     block = new Block(position, width, @getNewBlockId())
     @numBlocks++
     @_blocks[block._id] = block
+    if wrapperBlock
+      block.isWrapperBlock = true
     return block
 
   update: ->
     for id, block of @_blocks
-      @moveBlock block, 'down'
-      @moveBlock block, @_direction
-    @moveAnimat @_animat, 
-    @timeCounter++
+      if block.isWrapperBlock
+        @removeBlock(block._id)
+      else
+        @moveBlock block, 'down'
+        @moveBlock block, @_direction
+      
+    @moveAnimat @_animat
+    @_timeCounter++
 
   calcAnimatDirection: ->
     motorStates = @trial.lifeTable[@_timeCounter][-2...]
-    animatDirection = motorStates[0] + motorStates[1]
-    return animatDirection
+    directionNum = (motorStates[0] + 2 * motorStates[1]) % 4
+    switch directionNum
+      when 1
+        direction = 'right'
+      when 2
+        direction = 'left'
+      else
+        direction = 'none'
+    return direction
+
+  checkXPosition: (block) ->
+    xPosition = block.position.x
+    if xPosition >= @_dimensions[1]
+      xPosition = xPosition % @_dimensions[1]
+    else if xPosition < 0
+       xPosition = @_dimensions[1] + xPosition
+    wrappingBorder = @_dimensions[1] - block.width
+    blockOutsideEnvironment = xPosition - wrappingBorder
+    if blockOutsideEnvironment > 0
+      @addBlock({x: 0, y: block.position.y}, blockOutsideEnvironment, true)
+    return xPosition
 
   moveBlock: (block, direction) -> 
     ###
@@ -64,23 +91,28 @@ class Game
     switch direction
       when 'right'
         block.position.x++
+        block.position.x = @checkXPosition(block)
       when 'left'
         block.position.x--
+        block.position.x = @checkXPosition(block)
       when 'up'
         block.position.y--
       when 'down'
         block.position.y++  
     return
 
-   moveAnimat: (@_animat, direction) -> 
+   moveAnimat: (@_animat) -> 
     ###
     _Returns:_ the block object, moved one step to the left or right, and one step down.
     ###
+    direction = @calcAnimatDirection()
+    #console.log direction
     switch direction
       when 'right'
-        block.position.x++
+        @_animat.position.x++
       when 'left'
-        block.position.x--
+        @_animat.position.x--
+    @_animat.position.x = @checkXPosition(@_animat)
     return
 
   getBlock: (id) ->

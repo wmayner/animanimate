@@ -54,6 +54,7 @@ update = ->
   # Update the block list.
   blocks = game.getBlocks().concat(game.getAnimat())
   console.log blocks
+
   # Bind newly-fetched boxes to rects selection.
   rects = rects.data blocks
 
@@ -62,13 +63,14 @@ update = ->
     .append 'svg:rect'
       .attr 'class', 'block'
       .attr 'width', (block) -> 
+        console.log block._id
         console.log block.width
         block.width * GRID_WIDTH
       .attr 'height', GRID_HEIGHT
-      .on 'mouseover', (node) ->
+      .on 'mouseover', (block) ->
         # Enlarge target block
         d3.select(this).attr 'transform', 'scale(1.1)'
-      .on 'mouseout', (node) ->
+      .on 'mouseout', (block) ->
         # Unenlarge target block
         d3.select(this).attr 'transform', ''
 
@@ -76,6 +78,7 @@ update = ->
   # Note: since we appended to the enter selection, this will be applied to the
   # new rect elements we just created.
   rects
+      .attr 'width', (block) -> block.width * GRID_WIDTH
       .attr 'x', (block) -> block.position.x * GRID_WIDTH
       .attr 'y', (block) -> block.position.y * GRID_HEIGHT
       .style 'fill', blockColor
@@ -84,7 +87,7 @@ update = ->
         #if block.getAllEdgesOf(node._id).length is 0 then 0.4 else 1
         if block.on then 0.2 else 1
 
- # Remove old boxes.
+  # Remove old boxes.
   rects.exit().remove()
 # =====================================================================
 

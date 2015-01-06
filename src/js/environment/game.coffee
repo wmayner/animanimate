@@ -25,7 +25,6 @@ class Game
     @_blocks = {}
     #Fix this. Animat should be at position 15 on trial 36
     @_animat = new Animat({x: (@trial.trialNum-1) % @_dimensions[1], y: 35})
-    console.log @trial.trialNum
     width = @blockSize
     @addBlock({x: 0, y: 0}, width)
 

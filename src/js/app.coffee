@@ -11,7 +11,7 @@ SENSORS = [0, 1]
 HIDDEN = [2, 3, 4, 5]
 MOTORS = [6, 7]
 FIXED_INDICES = SENSORS.concat(HIDDEN).concat(MOTORS)
-CURRENT_GENERATION = 59904
+#CURRENT_GENERATION = 59904
 
 positions =
  0: {x: 197, y:  88, fixed: true}
@@ -114,10 +114,9 @@ $(document).ready ->
       $('#trial').html(currentTrial+1)
       timeStep = animationCounter%timeStepInterval
       if timeStep == 0
-        console.log trials.Trial[currentTrial]
+        #console.log trials.Trial[currentTrial]
         game = new Game(trials.Trial[currentTrial], trials.blockSize[currentTrial])
         environment.load(game)
-        #set animat position
       else
         environment.update()
         #render(trials.Trial[currentTrial], timeStep, trials.blockSize[animationCounter], direction)
@@ -151,6 +150,7 @@ $(document).ready ->
 
   $.getJSON 'data/AnimatBlockTrials32_59904.json', (json) ->
     trials = json
+    # The timeStepInterval should be 36, equal to the height of the environment
     timeStepInterval = trials.Trial[1].lifeTable.length
     currentAnimat = connectivityToGraph(trials.connectivityMatrix)
     network.load(currentAnimat)

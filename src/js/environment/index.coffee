@@ -102,7 +102,11 @@ exports.load = (newGame) ->
   update()
 
 exports.update = ->
-  game.update()
+  game.updateBlocks()
+  update()
+
+exports.updateAnimat = ->
+  game.updateAnimat()
   update()
 
 

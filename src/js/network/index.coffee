@@ -175,6 +175,8 @@ update = ->
   # Update displayed mechanisms and IDs.
   circleGroup.select '.node-label.id'
     .text (node) -> node.label
+    .style 'font-weight', (node) -> 
+        if node.justSet then 'bold' else 'normal'
 
   # Remove old nodes.
   circleGroup.exit().remove()

@@ -8,6 +8,7 @@ class Block
 
   constructor: (@position, @width, @_id) ->
     @isWrapperBlock = false
+    @isAnimat = false
 
 class Animat
 
@@ -37,7 +38,7 @@ class Game
     @_newBlockId++
     return id
 
-  addBlock: (position, width, wrapperBlock) ->
+  addBlock: (position, width, wrapperBlock, isAnimat) ->
     ###
     _Returns:_ the block object.
     ###
@@ -46,16 +47,19 @@ class Game
     @_blocks[block._id] = block
     if wrapperBlock
       block.isWrapperBlock = true
+    if isAnimat 
+      block.isAnimat = true
     return block
 
-  update: ->
+  updateBlocks: ->
     for id, block of @_blocks
       if block.isWrapperBlock
         @removeBlock(block._id)
       else
         @moveBlock block, 'down'
         @moveBlock block, @_direction
-      
+
+  updateAnimat: ->
     @moveAnimat @_animat
     @_timeCounter++
 
@@ -80,7 +84,7 @@ class Game
     wrappingBorder = @_dimensions[1] - block.width
     blockOutsideEnvironment = xPosition - wrappingBorder
     if blockOutsideEnvironment > 0
-      @addBlock({x: 0, y: block.position.y}, blockOutsideEnvironment, true)
+      @addBlock({x: 0, y: block.position.y}, blockOutsideEnvironment, true, block.isAnimat)
     return xPosition
 
   moveBlock: (block, direction) -> 

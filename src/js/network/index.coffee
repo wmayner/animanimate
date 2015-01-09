@@ -5,6 +5,8 @@
 Graph = require './graph'
 colors = require '../colors'
 
+# This determines behavior that differs between evolution and game display.
+exports.CONFIG = undefined
 
 exports.SENSORS = [0, 1]
 exports.HIDDEN = [2, 3, 4, 5]
@@ -164,19 +166,30 @@ update = ->
   # new circle elements we just created.
   circles
       .style 'fill', (node) ->
-        #nodeColor(node)
-        if graph.getAllEdgesOf(node._id).length is 0 then nodeColor(1) else nodeColor(node)
+        if exports.CONFIG is 'EVOLUTION'
+          return nodeColor(node)
+        else if exports.CONFIG is 'GAME'
+          if graph.getAllEdgesOf(node._id).length is 0
+            return nodeColor(1)
+          else
+            return nodeColor(node)
       # Lighten node if it has no connections.
       .style 'opacity', (node) ->
-        #if graph.getAllEdgesOf(node._id).length is 0 then 0.4 else 1
-        if node.on then 1 else 0.2
+        if exports.CONFIG is 'EVOLUTION'
+          return (if node.on then 1 else 0.2)
+        else if exports.CONFIG is 'GAME'
+          return (if graph.getAllEdgesOf(node._id).length is 0 then 0.4 else 1)
       .classed 'reflexive', (node) ->
         node.reflexive
   # Update displayed mechanisms and IDs.
   circleGroup.select '.node-label.id'
     .text (node) -> node.label
     .style 'font-weight', (node) ->
-        if node.justSet then 'bold' else 'normal'
+      if exports.CONFIG is 'EVOLUTION'
+        return 'normal'
+      else if exports.CONFIG is 'GAME'
+        return (if node.justSet then 'bold' else 'normal')
+
 
   # Remove old nodes.
   circleGroup.exit().remove()

@@ -4,4 +4,4 @@ bower_components
 lib
 app/js/*
 app/css/*
-app/index.html
+app/*.html

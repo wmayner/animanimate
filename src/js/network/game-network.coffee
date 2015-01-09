@@ -1,5 +1,5 @@
 ###
-# network/index.coffee
+# network/game-network.coffee
 ###
 
 Graph = require './graph'
@@ -163,7 +163,7 @@ update = ->
   # Note: since we appended to the enter selection, this will be applied to the
   # new circle elements we just created.
   circles
-      .style 'fill', (node) -> 
+      .style 'fill', (node) ->
         #nodeColor(node)
         if graph.getAllEdgesOf(node._id).length is 0 then nodeColor(1) else nodeColor(node)
       # Lighten node if it has no connections.
@@ -175,7 +175,7 @@ update = ->
   # Update displayed mechanisms and IDs.
   circleGroup.select '.node-label.id'
     .text (node) -> node.label
-    .style 'font-weight', (node) -> 
+    .style 'font-weight', (node) ->
         if node.justSet then 'bold' else 'normal'
 
   # Remove old nodes.

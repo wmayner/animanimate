@@ -34,18 +34,16 @@ body
                   span.glyphicon.glyphicon-play
               .control-group
                 span.control-label Generation:
-                #generation-slider-container
+                #timestep-slider-container
                   input.slider.slider-horizontal(type='text')
-        .generation-label
-          p Generation 
-            span#generation 0
+        #timestep Generation 0
     .row.clearfix
       .col-lg-6
         #network-module.module
           .row.clearfix.row-centered
             .col-centered
-              h2.module-title Environment
-              #environment-container.module-canvas
+              h2.module-title Animat
+              #network-container.module-canvas
       .col-lg-6
         #chart-module.module
           h2.module-title Fitness

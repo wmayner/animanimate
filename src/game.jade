@@ -24,19 +24,19 @@ body
       .col-lg-12
         h1.page-header.title Evolving Animats
         .animation-controls
-          .btn-group
-            button#play-pause.btn.btn-large.btn-default
-              span.glyphicon.glyphicon-play
-        // generation changed to trial
-    .row.clearfix
-      .col-lg-6
-        .trial-label
-          p Trial 
-            span#trial 0
-      .col-lg-6    
-        .time-step-label
-          p Time Step 
-            span#time-step 0    
+          .row.clearfix.row-centered
+            .col-centered
+              .control-group
+                span.control-label Speed:
+                #speed-slider-container
+                  input.slider.slider-horizontal(type='text')
+                button#play-pause.btn.btn-large.btn-default
+                  span.glyphicon.glyphicon-play
+              .control-group
+                span.control-label Trial:
+                #timestep-slider-container
+                  input.slider.slider-horizontal(type='text')
+      #timestep Trial 0    
     .row.clearfix
       .col-lg-6
         #environment-module.module

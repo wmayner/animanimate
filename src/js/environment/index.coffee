@@ -22,7 +22,10 @@ GRID_HEIGHT = height/ENVIRONMENT_HEIGHT
 ANIMAT_COLOR = d3.rgb 200, 200, 0
 BLOCK_COLOR = d3.rgb 100, 100, 0
 
+
 game = undefined
+
+
 # Helpers
 # =====================================================================
 
@@ -32,7 +35,7 @@ blockColor = (block) ->
     return ANIMAT_COLOR
   else
     return BLOCK_COLOR
-  
+
 
 # =====================================================================
 
@@ -53,7 +56,6 @@ update = ->
 
   # Update the block list.
   blocks = game.getBlocks().concat(game.getAnimat())
-  console.log blocks
 
   # Bind newly-fetched boxes to rects selection.
   rects = rects.data blocks
@@ -62,9 +64,7 @@ update = ->
   rects.enter()
     .append 'svg:rect'
       .attr 'class', 'block'
-      .attr 'width', (block) -> 
-        console.log block._id
-        console.log block.width
+      .attr 'width', (block) ->
         block.width * GRID_WIDTH
       .attr 'height', GRID_HEIGHT
       .on 'mouseover', (block) ->
@@ -92,41 +92,14 @@ update = ->
 # =====================================================================
 
 
-# Set up initial game.
-# game = new Game()
-# update()
-
-
 exports.load = (newGame) ->
   game = newGame
   update()
 
-exports.update = ->
+exports.updateBlocks = ->
   game.updateBlocks()
   update()
 
 exports.updateAnimat = ->
   game.updateAnimat()
   update()
-
-
-# Copyright (c) 2013-2014 Ross Kirsling
-
-# Permission is hereby granted, free of charge, to any person obtaining
-# a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including
-# without limitation the rights to use, copy, modify, merge, publish,
-# distribute, sublicense, and/or sell copies of the Software, and to
-# permit persons to whom the Software is furnished to do so, subject to
-# the following conditions:
-
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-# LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-# WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

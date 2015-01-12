@@ -152,7 +152,7 @@ update = ->
   # Show node IDs.
   g.append 'svg:text'
       .attr 'x', 0
-      .attr 'y', 8
+      .attr 'y', 7
       .classed 'node-label', true
       .classed 'id', true
       .attr 'fill', colors.node.label
@@ -166,17 +166,14 @@ update = ->
   # new circle elements we just created.
   circles
       .style 'fill', (node) ->
-        if exports.CONFIG is 'EVOLUTION'
+        if graph.getAllEdgesOf(node._id).length is 0
+          return colors.node.other
+        else
           return nodeColor(node)
-        else if exports.CONFIG is 'GAME'
-          if graph.getAllEdgesOf(node._id).length is 0
-            return nodeColor(1)
-          else
-            return nodeColor(node)
       # Lighten node if it has no connections.
-      .style 'opacity', (node) ->
+      .style 'fill-opacity', (node) ->
         if exports.CONFIG is 'EVOLUTION'
-          return (if node.on then 1 else 0.2)
+          return (if node.on then 1 else 0.4)
         else if exports.CONFIG is 'GAME'
           return (if graph.getAllEdgesOf(node._id).length is 0 then 0.4 else 1)
       .classed 'reflexive', (node) ->

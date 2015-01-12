@@ -1,185 +1,93 @@
-'use strict'
+###
+# game-animation.coffee
+###
 
 # Initialize interface components
-Chart = require './chart'
 network = require './network'
-Graph = require './network/graph'
+Animation = require './animation'
 environment = require './environment'
 Game = require './environment/game'
 
-SENSORS = [0, 1]
-HIDDEN = [2, 3, 4, 5]
-MOTORS = [6, 7]
-FIXED_INDICES = SENSORS.concat(HIDDEN).concat(MOTORS)
-SPEED = 100
+NUM_SUBFRAMES = 4
 
-if SENSORS.length == 2
-  console.log SENSORS.length
-  positions =
-   0: {x: 197, y:  88, fixed: true}
-   1: {x: 331, y:  88, fixed: true}
-   2: {x: 102, y: 225, fixed: true}
-   3: {x: 426, y: 225, fixed: true}
-   4: {x: 102, y: 375, fixed: true}
-   5: {x: 426, y: 375, fixed: true}
-   6: {x: 197, y: 520, fixed: true}
-   7: {x: 331, y: 520, fixed: true}
-else 
-  positions =
-   0: {x: 102, y:  88, fixed: true}
-   1: {x: 264, y:  88, fixed: true}
-   2: {x: 426, y:  88, fixed: true}
-   3: {x: 102, y: 275, fixed: true}
-   4: {x: 264, y: 375, fixed: true}
-   5: {x: 426, y: 275, fixed: true}
-   6: {x: 197, y: 520, fixed: true}
-   7: {x: 331, y: 520, fixed: true}
+exports.init = (network, connectivityToGraph) ->
 
-initialConnectivityMatrix = [
-  [0,0,0,0,0,0,0,0]
-  [0,0,0,0,0,0,0,0]
-  [0,0,0,0,0,0,0,0]
-  [0,0,0,0,0,0,0,0]
-  [0,0,0,0,0,0,0,0]
-  [0,0,0,0,0,0,0,0]
-  [0,0,0,0,0,0,0,0]
-  [0,0,0,0,0,0,0,0]
-]
+  $.getJSON 'data/AnimatBlockTrials32_59904.json', (trials) ->
 
-connectivityToGraph = (cm) ->
-  graph = new Graph()
-  for i in [0...cm.length]
-    if i in FIXED_INDICES
-      graph.addNode(positions[i])
-    else
-      graph.addNode()
-  for i in [0...cm.length]
-    for j in [0...cm[i].length]
-      if cm[i][j]
-        # In the Matlab code, connectivity matrices use the j --> i
-        # convention.
-        graph.addEdge(j, i)
-  return graph
+    # The number of timesteps in a game should be 36, equal to the height of
+    # the environment.
+    gameLength = trials.Trial[1].lifeTable.length
 
-PLAY_PAUSE_BUTTON_SELECTOR = '#play-pause'
+    trial = 0
 
-$(document).ready ->
+    getTrial = -> trial
 
-  render = (counter, cT) ->
-    $('#trial').html(cT+1)
-    timeStep = (counter // 4)%(timeStepInterval)
-    $('#time-step').html(timeStep+1)
-    internalStep = counter%4
-    switch internalStep
+    # Initialize network.
+    animat = connectivityToGraph(trials.connectivityMatrix)
+    network.load(animat)
+
+    # Animation functions.
+    renderSensors = (data, timestep) ->
+      # Color Sensors according to on/off.
+      state = data.lifeTable[timestep]
+      for i in network.SENSORS
+        node = animat.getNodeByIndex(i)
+        animat.setState(node, state[i])
+      # Reset the hidden and motors.
+      for i in network.HIDDEN.concat(network.MOTORS)
+        node = animat.getNodeByIndex(i)
+        animat.resetNode(node)
+      # Update network display.
+      network.load(animat)
+      return
+
+    renderHidden = (data, timestep) ->
+      # Color Hidden units and Motors according to on/off.
+      state = data.lifeTable[timestep]
+      for i in network.HIDDEN.concat(network.MOTORS)
+         node = animat.getNodeByIndex(i)
+         animat.setState(node, state[i])
+      # Reset the sensors.
+      for i in network.SENSORS
+        node = animat.getNodeByIndex(i)
+        animat.resetNode(node)
+      # Update the network display.
+      network.load(animat)
+      return
+
+    render = (nextFrame) ->
+      trial = nextFrame // (NUM_SUBFRAMES * gameLength)
+      # Timestep within a single game.
+      timestep = (nextFrame // NUM_SUBFRAMES) % gameLength
+      # Timestep within a game timestep.
+      internalTimestep = nextFrame % NUM_SUBFRAMES
+      switch internalTimestep
         when 0
-          #move block
-          if timeStep == 0
-            #console.log trials.Trial[cT]
-            game = new Game(trials.Trial[cT], trials.blockSize[cT])
+          if timestep is 0
+            # Beginning of game
+            game = new Game(trials.Trial[trial], trials.blockSize[trial])
             environment.load(game)
           else
-            # 1) move block
-            environment.update()  
+            # Move block.
+            environment.updateBlocks()
         when 1
-          #update Sensors
-          renderSensors(trials.Trial[cT], timeStep)
-        when 2 
-          #update hidden and motors
-          renderHidden(trials.Trial[cT], timeStep)
+          # Update Senso.rs
+          renderSensors(trials.Trial[trial], timestep)
+        when 2
+          # Update hidden and motors.
+          renderHidden(trials.Trial[trial], timestep)
         else
-          #move animat
+          # Move animat.
           environment.updateAnimat()
-    return
+      return
 
-  renderSensors = (data, ts) ->
-    # color Sensors according to on/off
-    state = data.lifeTable[ts]
-    for i in SENSORS
-      node = currentAnimat.getNodeByIndex(i)
-      currentAnimat.setState(node, state[i])
-    for i in HIDDEN.concat(MOTORS)
-      node = currentAnimat.getNodeByIndex(i)
-      currentAnimat.resetNode(node)
-    network.load(currentAnimat)
-    return
+    # Initialize animation.
+    animation = new Animation
+      render: render
+      # 4 (move block, update sensors, updated hidden, move animat)
+      # * number of trials * 36
+      numFrames: NUM_SUBFRAMES * trials.Trial.length * gameLength
+      timestepFormatter: (timestep) -> "Trial #{getTrial()}"
+      timestepSliderStep: NUM_SUBFRAMES * gameLength
 
-  renderHidden = (data, ts) ->
-    # color Hidden units and Motors according to on/off
-    state = data.lifeTable[ts]
-    for i in SENSORS
-      node = currentAnimat.getNodeByIndex(i)
-      currentAnimat.resetNode(node)
-    for i in HIDDEN.concat(MOTORS)
-       node = currentAnimat.getNodeByIndex(i)
-       currentAnimat.setState(node, state[i])
-    network.load(currentAnimat)
-    return
-
-  running = false
-  finished = false
-  animation = undefined
-  generations = undefined
-  trials = undefined
-  currentAnimat = undefined
-  currentGeneration = 0
-  currentTrial = 0
-  animationCounter = 0
-  timeStepInterval = 0
-  maxAnimationSteps = 0
-
-  displayPlayButton = ->
-    $("#{PLAY_PAUSE_BUTTON_SELECTOR} > span")
-        .removeClass('glyphicon-pause')
-        .addClass('glyphicon-play')
-
-  displayPauseButton = ->
-    $("#{PLAY_PAUSE_BUTTON_SELECTOR} > span")
-        .removeClass('glyphicon-play')
-        .addClass('glyphicon-pause')
-
-  animate = ->
-    if animationCounter < maxAnimationSteps
-      render(animationCounter, currentTrial)
-    else
-      clearInterval(animation)
-      displayPlayButton()
-      finished = true
-    animationCounter++
-    if animationCounter%(4*timeStepInterval) == 0 
-      currentTrial++
-
-  clear = ->
-    console.log "Clearing graphs"
-    currentGeneration = 0
-    currentTrial = 0
-
-    
-  playAnimation = ->
-    console.log "Playing animation"
-    running = true
-    finished = false
-    displayPauseButton()
-    animation = setInterval(animate, SPEED)
-
-  pauseAnimation = ->
-    console.log "Pausing animation"
-    clearInterval(animation)
-    displayPlayButton()
-    running = false
-
-  $.getJSON 'data/AnimatBlockTrials32_59904.json', (json) ->
-    trials = json
-    # The timeStepInterval should be 36, equal to the height of the environment
-    timeStepInterval = trials.Trial[1].lifeTable.length
-    # 4 (move block, update sensors, updated hidden, move animat) * number of trials * 36
-    maxAnimationSteps = 4*trials.Trial.length*timeStepInterval
-    currentAnimat = connectivityToGraph(trials.connectivityMatrix)
-    network.load(currentAnimat)
-    $(PLAY_PAUSE_BUTTON_SELECTOR).mouseup ->
-      if running and not finished
-        pauseAnimation()
-      else if finished
-        clear()
-        playAnimation()
-      else
-        playAnimation()
+    animation.play()

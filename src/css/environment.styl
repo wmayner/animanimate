@@ -1,12 +1,12 @@
-// network.styl
+// environment.styl
 
 node_radius = 18
 
-#network-container
-
-  margin 40px 0
+#environment-container
 
   svg
+    border 1px solid #ccc
+    box-sizing content-box
     &:not(.active):not(.shiftkey)
       cursor crosshair
       path
@@ -14,6 +14,7 @@ node_radius = 18
           cursor pointer
 
   path.link
+    fill none
     stroke edge_color
     stroke-width 5px
     cursor default
@@ -32,8 +33,8 @@ node_radius = 18
     stroke-width 1.5px
     cursor pointer
     &.reflexive
-      stroke #444 !important
-      stroke-width 5px
+      stroke #aaa !important
+      stroke-width 6px
 
   text
     font 14px 'Helvetica Neue', sans-serif
@@ -42,4 +43,4 @@ node_radius = 18
       text-anchor middle
       &.id
         font 20px 'Helvetica Neue', sans-serif
-
+        font-weight bold

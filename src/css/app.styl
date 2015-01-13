@@ -44,10 +44,15 @@ body
   font-size 22px
   margin 25px 0
 
-.generation-label
+.trial-label
   margin-bottom 25px
   font-size 22pt
-  text-align center
+  text-align right
+
+.time-step-label
+  margin-bottom 25px
+  font-size 22pt
+  text-align left
 
 .btn-primary
   background sol_cyan
@@ -74,16 +79,21 @@ body
   > .slider-horizontal
     width 150px
 
-#generation-slider-container
+#timestep-slider-container
   > .slider-horizontal
     width 300px
 
-#generation-slider-container, #speed-slider-container
+#timestep-slider-container, #speed-slider-container
   display inline-block
   padding 8px 20px 7px 20px
   margin 0 20px
   background #e9e9e9
   border-radius 5px
 
+#timestep
+  text-align center
+  font-size 150%
+
 @import "network"
+@import "environment"
 @import "chart"

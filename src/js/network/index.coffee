@@ -1,10 +1,12 @@
 ###
-# network/index.coffee
+# network/game-network.coffee
 ###
 
 Graph = require './graph'
 colors = require '../colors'
 
+# This determines behavior that differs between evolution and game display.
+exports.CONFIG = undefined
 
 exports.SENSORS = [0, 1]
 exports.HIDDEN = [2, 3, 4, 5]
@@ -150,7 +152,7 @@ update = ->
   # Show node IDs.
   g.append 'svg:text'
       .attr 'x', 0
-      .attr 'y', 8
+      .attr 'y', 7
       .classed 'node-label', true
       .classed 'id', true
       .attr 'fill', colors.node.label
@@ -163,15 +165,28 @@ update = ->
   # Note: since we appended to the enter selection, this will be applied to the
   # new circle elements we just created.
   circles
-      .style 'fill', (node) -> nodeColor(node)
+      .style 'fill', (node) ->
+        if graph.getAllEdgesOf(node._id).length is 0
+          return colors.node.other
+        else
+          return nodeColor(node)
       # Lighten node if it has no connections.
-      .style 'opacity', (node) ->
-        if graph.getAllEdgesOf(node._id).length is 0 then 0.4 else 1
+      .style 'fill-opacity', (node) ->
+        if exports.CONFIG is 'EVOLUTION'
+          return (if node.on then 1 else 0.4)
+        else if exports.CONFIG is 'GAME'
+          return (if graph.getAllEdgesOf(node._id).length is 0 then 0.4 else 1)
       .classed 'reflexive', (node) ->
         node.reflexive
   # Update displayed mechanisms and IDs.
   circleGroup.select '.node-label.id'
     .text (node) -> node.label
+    .style 'font-weight', (node) ->
+      if exports.CONFIG is 'EVOLUTION'
+        return 'normal'
+      else if exports.CONFIG is 'GAME'
+        return (if node.justSet then 'bold' else 'normal')
+
 
   # Remove old nodes.
   circleGroup.exit().remove()

@@ -2,6 +2,8 @@
 # graph.coffee
 ###
 
+utils = require './utils'
+
 ###
 Graph implemented as a modified incidence list. O(1) for every typical
 operation except `removeNode()` at O(E) where E is the number of edges.
@@ -75,11 +77,19 @@ class Graph
       on: 0
       mechanism: 'MAJ'
       reflexive: false
+      justSet: false
     for key, value of nodeData
       node[key] = value
     @nodeSize++
     @_nodes[node._id] = node
     return node
+
+  resetNode: (node) ->
+    node.justSet = false
+
+  resetNodes: ->
+    @forEachNode (node) ->
+      node.justSet = false
 
   getNode: (id) ->
     ###
@@ -299,6 +309,10 @@ class Graph
 
   toggleState: (node) ->
     node.on = utils.negate(node.on)
+
+  setState: (node, state) ->
+    node.on = utils.bit(state)
+    node.justSet = true
 
   toggleReflexivity: (node) ->
     node.reflexive = not node.reflexive

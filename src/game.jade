@@ -1,0 +1,74 @@
+doctype html
+html(lang='en')
+head
+  meta(charset='utf-8')
+  meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
+  meta(name='viewport', content='width=device-width')
+
+  title Animats
+
+  // Online/Offline
+  // link(href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css', rel='stylesheet', type='text/css')
+  link(href='/bower_components/bootstrap/dist/css/bootstrap.min.css', rel='stylesheet', type='text/css')
+
+  // TODO load minified versions
+  link(href='/bower_components/seiyria-bootstrap-slider/css/bootstrap-slider.css', rel='stylesheet', type='text/css')
+
+  // TODO load minified versions
+  link(href='/bower_components/c3/c3.css', rel='stylesheet', type='text/css')
+
+  link(href='/css/app.css', rel='stylesheet', type='text/css')
+body
+  .container
+    .row.clearfix
+      .col-lg-12
+        h1.page-header.title Evolving Animats
+        .animation-controls
+          .row.clearfix.row-centered
+            .col-centered
+              .control-group
+                span.control-label Speed:
+                #speed-slider-container
+                  input.slider.slider-horizontal(type='text')
+                button#play-pause.btn.btn-large.btn-default
+                  span.glyphicon.glyphicon-play
+              .control-group
+                span.control-label Trial:
+                #timestep-slider-container
+                  input.slider.slider-horizontal(type='text')
+      #timestep Trial 0    
+    .row.clearfix
+      .col-lg-6
+        #environment-module.module
+          .row.clearfix.centered
+            .col-centered
+              h2.module-title Environment
+              #environment-container.module-canvas
+      .col-lg-6
+        #network-module.module
+          .row.clearfix.centered
+            .col-centered
+              h2.module-title Animat
+              #network-container.module-canvas
+              
+  // Online/Offline
+  // script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
+  script(src='/bower_components/jquery/jquery.min.js')
+
+  // TODO get minified versions
+  script(src='/bower_components/seiyria-bootstrap-slider/js/bootstrap-slider.js')
+
+  // Online/Offline
+  // TODO get minified versions
+  // script(src='//cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.js')
+  script(src='/bower_components/d3/d3.js')
+
+  // TODO get minified versions
+  // Online/Offline
+  script(src='/bower_components/c3/c3.js')
+
+  script(src='/js/app.js')
+
+  // Online/Offline
+  // script(src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js')
+  script(src='/bower_components/bootstrap/dist/js/bootstrap.min.js')

@@ -86,7 +86,7 @@ exports.init = (network, connectivityToGraph) ->
       render: render
       # 4 (move block, update sensors, updated hidden, move animat)
       # * number of trials * 36
-      numFrames: NUM_SUBFRAMES * trials.Trial.length * gameLength
+      numFrames: NUM_SUBFRAMES * trials.Trial.length * gameLength - 1
       timestepFormatter: (timestep) -> "Trial #{getTrial()}"
       timestepSliderStep: NUM_SUBFRAMES * gameLength
 

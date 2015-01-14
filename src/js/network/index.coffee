@@ -28,6 +28,8 @@ NODE_RADIUS = 25
 
 # Color nodes based on role in the animat.
 nodeColor = (node) ->
+  if graph.getAllEdgesOf(node._id).length is 0
+    return colors.node.other
   if node.index in exports.SENSORS
     return colors.node.sensor
   else if node.index in exports.HIDDEN
@@ -165,17 +167,13 @@ update = ->
   # Note: since we appended to the enter selection, this will be applied to the
   # new circle elements we just created.
   circles
-      .style 'fill', (node) ->
-        if graph.getAllEdgesOf(node._id).length is 0
-          return colors.node.other
-        else
-          return nodeColor(node)
+      .style 'fill', nodeColor
       # Lighten node if it has no connections.
       .style 'fill-opacity', (node) ->
         if exports.CONFIG is 'EVOLUTION'
-          return (if node.on then 1 else 0.4)
+          return 1
         else if exports.CONFIG is 'GAME'
-          return (if graph.getAllEdgesOf(node._id).length is 0 then 0.4 else 1)
+          return (if node.on then 1 else 0.3)
       .classed 'reflexive', (node) ->
         node.reflexive
   # Update displayed mechanisms and IDs.

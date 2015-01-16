@@ -29,23 +29,26 @@ class Animation
     @timestepSliderStep = config.timestepSliderStep
     @onReset = config.reset or ->
     @timestepFormatter = config.timestepFormatter
+    @speedMultiplier = config.speedMultiplier or 1
 
-    @speed = 150
+    @speed = 110
     @nextFrame = 0
     @timeout = 0
     @running = false
     @finished = false
 
+
     # Initialize sliders.
     speedSlider.slider(
       id: 'speed-slider'
       reversed: true
-      min: 0
-      max: 1000
-      step: 100
+      min: 10
+      max: 510
+      step: 50
       value: @speed
       formatter: (value) ->
-        "Speed: #{d3.round(10 - (value / 100), 0)}"
+        scale = d3.scale.linear().domain([@min, @max]).range([10, 1])
+        return "Speed: #{d3.round(scale(value), 0)}"
     )
     timestepSlider.slider(
       id: 'timestep-slider'
@@ -97,7 +100,7 @@ class Animation
   animate: =>
     unless @finished
       @tick()
-      @timeout = setTimeout(@animate, @speed)
+      @timeout = setTimeout(@animate, @speed * (1 / @speedMultiplier))
     else
       @pause()
 

@@ -49,16 +49,13 @@ connectivityToGraph = (cm) ->
   return graph
 
 $(document).ready ->
-  # Determine current page.
-  page = location.pathname.split('/')[1]
 
+  console.log window.ANIMAT_NETWORK_CONFIG
   # Configure network.
-  if page.indexOf('evolution') > -1
-    network.CONFIG = 'EVOLUTION'
-  else if page.indexOf('game') > -1
-    network.CONFIG = 'GAME'
+  if window.ANIMAT_NETWORK_CONFIG
+    network.CONFIG = window.ANIMAT_NETWORK_CONFIG
   else
-    console.error "Not on evolution or game page; cannot configure network."
+    console.error "Cannot configure network."
   console.log "Configured network for: #{network.CONFIG}"
 
   # Initialize network.

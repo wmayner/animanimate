@@ -18,6 +18,9 @@ head
   link(href='/bower_components/c3/c3.css', rel='stylesheet', type='text/css')
 
   link(href='/css/app.css', rel='stylesheet', type='text/css')
+
+  script(type='text/javascript').
+   window.ANIMAT_NETWORK_CONFIG = 'GAME';
 body
   .container
     .row.clearfix
@@ -87,7 +90,7 @@ body
       .col-md-9
         h3 Reference
         p Albantakis L, Hintze A, Koch C, Adami C, Tononi G. 2014. “<a href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1003966" target="_blank">Evolution of Integrated Causal Structures in Animats Exposed to Environments of Increasing Complexity</a>.” <em>PLoS computational biology</em>, 10 (12), pp. e1003966.
-              
+
   // Online/Offline
   // script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
   script(src='/bower_components/jquery/jquery.min.js')
@@ -98,11 +101,11 @@ body
   // Online/Offline
   // TODO get minified versions
   // script(src='//cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.js')
-  script(src='/bower_components/d3/d3.js')
+  script(src='/bower_components/d3/d3.min.js')
 
   // TODO get minified versions
   // Online/Offline
-  script(src='/bower_components/c3/c3.js')
+  script(src='/bower_components/c3/c3.min.js')
 
   script(src='/js/app.js')
 

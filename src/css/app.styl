@@ -9,31 +9,43 @@ mono_font = 'Droid Sans Mono', 'Monaco', 'Menlo', 'Courier New', monospace
 
 
 body
+  margin-top 50px
+  padding-top 10px
   font-family base_font
   font-size 16px
   background sol_background
 
+a
+  color sol_cyan
+  &:hover
+    color sol_cyan
+    text-decoration underline
+
 .container
-  min-width 560px
   margin-bottom 50px
 
 .col-centered
   display inline-block
   float none
-  // reset the text-align
+  // Reset the text-align.
   text-align left
-  // inline-block space fix
+  // Inline-block space fix.
   margin-right -4px
 
 .title
   text-align center
   margin-bottom 20px
 
+.nav-tabs
+  margin-bottom 30px
+  > li
+    > a
+      color sol_cyan
+    &.active > a
+      background sol_background
+
 .lead
   margin-bottom 35px
-
-.citation
-  margin 20px 0
 
 .animation-controls
   text-align center
@@ -41,7 +53,7 @@ body
 .module-title
   text-align center
   font-size 22px
-  margin 25px 0
+  margin 20px 0
 
 .trial-label
   margin-bottom 25px
@@ -54,6 +66,7 @@ body
   text-align left
 
 .btn-primary
+  border none
   background sol_cyan
 
 .module-canvas
@@ -86,10 +99,14 @@ body
 
 #timestep-slider-container, #speed-slider-container
   display inline-block
-  padding 8px 20px 7px 20px
+  padding 4px 20px 6px 20px
   margin 0 20px
-  background #e9e9e9
+  background #eee
   border-radius 5px
+
+.slider-handle
+  background-color sol_cyan
+  background-image none
 
 #timestep
   text-align center

@@ -22,9 +22,14 @@ body
   .container
     .row.clearfix
       .col-md-12
-        h1.page-header.title Evolving Animats
+        h1.title Evolving Animats
+        ul.nav.nav-tabs
+          li.active(role="presentation")
+            a(href='/evolution.html') Evolution
+          li(role="presentation")
+            a(href='/game.html') Task Simulation
         .row.clearfix
-          .col-md-8.col-md-offset-2
+          .col-md-12
             p.lead Evolution of one example animat in the Task 4 environment of 
               a(href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1003966" target="_blank") Albantakis et al. 2014
               | . In Task 4, the animat must catch blocks of size 3 and 6 and avoid blocks of size 4 and 5.
@@ -36,7 +41,7 @@ body
                 span.control-label Speed:
                 #speed-slider-container
                   input.slider.slider-horizontal(type='text')
-                button#play-pause.btn.btn-large.btn-default
+                button#play-pause.btn.btn-large.btn-primary
                   span.glyphicon.glyphicon-play
               .control-group
                 span.control-label Generation:
@@ -44,7 +49,7 @@ body
                   input.slider.slider-horizontal(type='text')
         #timestep Generation 0
     .row.clearfix
-      .col-md-6
+      .col-lg-6
         #network-module.module
           .row.clearfix
             .col-md-12
@@ -57,7 +62,7 @@ body
                   li Self-loops are indicated by dark circles around the elements.
                   li Elements in the “off” state are dimmed, elements in the “on” state are brightly colored. 
                   li Elements with no connections are grayed-out.
-      .col-md-6
+      .col-lg-6
         #chart-module.module
           h2.module-title Fitness
           #fitness-chart-container.chart-container
@@ -68,9 +73,11 @@ body
           h2.module-title Number of Concepts
           #num-concepts-chart-container.chart-container
             #num-concepts-chart.chart.module-canvas
+    hr
     .row.clearfix
-      .col-md-12
-        .citation Albantakis L, Hintze A, Koch C, Adami C, Tononi G. 2014. “<a href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1003966" target="_blank">Evolution of Integrated Causal Structures in Animats Exposed to Environments of Increasing Complexity</a>.” <em>PLoS computational biology</em>, 10 (12), pp. e1003966.
+      .col-md-9
+        h3 Reference
+        p Albantakis L, Hintze A, Koch C, Adami C, Tononi G. 2014. “<a href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1003966" target="_blank">Evolution of Integrated Causal Structures in Animats Exposed to Environments of Increasing Complexity</a>.” <em>PLoS computational biology</em>, 10 (12), pp. e1003966.
               
   // Online/Offline
   // script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')

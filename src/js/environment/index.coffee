@@ -19,8 +19,6 @@ ENVIRONMENT_HEIGHT = 36
 
 GRID_WIDTH = width/ENVIRONMENT_WIDTH
 GRID_HEIGHT = height/ENVIRONMENT_HEIGHT
-ANIMAT_COLOR = d3.rgb 200, 200, 0
-BLOCK_COLOR = d3.rgb 100, 100, 0
 
 
 game = undefined
@@ -29,12 +27,16 @@ game = undefined
 # Helpers
 # =====================================================================
 
+# TODO use classes and CSS instead. Somehow that's broken... when blocks wrap
+# they acquire the '.animat' class magically. Game needs serious
+# refactoring/fixing.
+
 # Color boxes based on role in the animat.
 blockColor = (block) ->
   if block.isAnimat
-    return ANIMAT_COLOR
+    return colors.animat
   else
-    return BLOCK_COLOR
+    return colors.block
 
 
 # =====================================================================
@@ -82,9 +84,7 @@ update = ->
       .attr 'x', (block) -> block.position.x * GRID_WIDTH
       .attr 'y', (block) -> block.position.y * GRID_HEIGHT
       .style 'fill', blockColor
-      # Lighten node if it has no connections.
       .style 'opacity', (block) ->
-        #if block.getAllEdgesOf(node._id).length is 0 then 0.4 else 1
         if block.on then 0.2 else 1
 
   # Remove old boxes.

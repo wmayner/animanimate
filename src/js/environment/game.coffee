@@ -18,13 +18,13 @@ class Animat
 
 class Game
 
-  constructor: (@trial, @blockSize) -> 
+  constructor: (@trial, @blockSize) ->
     @_newBlockId = 0
     @_dimensions = [36,16]
     @_direction = (if ((@trial.trialNum - 1) // @_dimensions[1]) % 2 then 'right' else 'left')
     @_timeCounter = 0
     @_blocks = {}
-    #Fix this. Animat should be at position 15 on trial 36
+    # TODO Fix this. Animat should be at position 15 on trial 36
     @_animat = new Animat({x: (@trial.trialNum-1) % @_dimensions[1], y: 35})
     width = @blockSize
     @addBlock({x: 0, y: 0}, width)
@@ -47,7 +47,7 @@ class Game
     @_blocks[block._id] = block
     if wrapperBlock
       block.isWrapperBlock = true
-    if isAnimat 
+    if isAnimat
       block.isAnimat = true
     return block
 
@@ -87,7 +87,7 @@ class Game
       @addBlock({x: 0, y: block.position.y}, blockOutsideEnvironment, true, block.isAnimat)
     return xPosition
 
-  moveBlock: (block, direction) -> 
+  moveBlock: (block, direction) ->
     ###
     _Returns:_ the block object, moved one step to the left or right, and one step down.
     ###
@@ -101,10 +101,10 @@ class Game
       when 'up'
         block.position.y--
       when 'down'
-        block.position.y++  
+        block.position.y++
     return
 
-   moveAnimat: (@_animat) -> 
+   moveAnimat: (@_animat) ->
     ###
     _Returns:_ the block object, moved one step to the left or right, and one step down.
     ###

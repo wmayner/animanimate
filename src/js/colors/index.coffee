@@ -15,3 +15,5 @@ module.exports =
   link:
     line: d3.rgb 0, 0, 0
     endpoint: d3.rgb 130, 130, 130
+  block: '#444'
+  animat: solarized.cyan

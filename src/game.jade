@@ -22,9 +22,14 @@ body
   .container
     .row.clearfix
       .col-md-12
-        h1.page-header.title Evolving Animats
+        h1.title Evolving Animats
+        ul.nav.nav-tabs
+          li(role="presentation")
+            a(href='/evolution.html') Evolution
+          li.active(role="presentation")
+            a(href='/game.html') Task Simulation
         .row.clearfix
-          .col-md-8.col-md-offset-2
+          .col-md-12
             p.lead Final behavior (generation 59,904) of one example animat in the Task 4 environment of 
               a(href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1003966" target="_blank") Albantakis et al. 2014
               | . In Task 4, the animat must catch blocks of size 3 and 6 and avoid blocks of size 4 and 5.
@@ -35,7 +40,7 @@ body
                 span.control-label Speed:
                 #speed-slider-container
                   input.slider.slider-horizontal(type='text')
-                button#play-pause.btn.btn-large.btn-default
+                button#play-pause.btn.btn-large.btn-primary
                   span.glyphicon.glyphicon-play
               .control-group
                 span.control-label Trial:
@@ -43,7 +48,7 @@ body
                   input.slider.slider-horizontal(type='text')
       #timestep Trial 0    
     .row.clearfix
-      .col-md-6
+      .col-lg-6
         #environment-module.module
           .row.clearfix
             .col-md-12
@@ -51,13 +56,21 @@ body
               #environment-container.module-canvas
               .caption
                 p The animat was tested on a total of 128 trials (blocks of 4 different sizes, falling in 2 directions, with 16 different initial animat positions).
-                ul
-                  li Trials 1–32: size 3 blocks (catch)
-                  li Trials 33–64: size 4 blocks (avoid)
-                  li Trials 65–96: size 6 blocks (catch)
-                  li Trials 97–128: size 5 blocks (avoid)
+                dl
+                  li 
+                    strong Trials 1–32:
+                    |  size 3 blocks (catch)
+                  li 
+                    strong Trials 33–64:
+                    |  size 4 blocks (avoid)
+                  li 
+                    strong Trials 65–96:
+                    |  size 6 blocks (catch)
+                  li 
+                    strong Trials 97–128:
+                    |  size 5 blocks (avoid)
                 p The animat reached a fitness value of 125/128, meaning it correctly catches or avoids blocks in 125 out of the 128 trials.
-      .col-md-6
+      .col-lg-6
         #network-module.module
           .row.clearfix
             .col-md-12
@@ -69,9 +82,11 @@ body
                   li Self-loops are indicated by dark circles around the elements.
                   li Elements in the “off” state are dimmed, elements in the “on” state are brightly colored. 
                   li Elements with no connections are grayed-out.
+    hr
     .row.clearfix
-      .col-md-12
-        .citation Albantakis L, Hintze A, Koch C, Adami C, Tononi G. 2014. “<a href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1003966" target="_blank">Evolution of Integrated Causal Structures in Animats Exposed to Environments of Increasing Complexity</a>.” <em>PLoS computational biology</em>, 10 (12), pp. e1003966.
+      .col-md-9
+        h3 Reference
+        p Albantakis L, Hintze A, Koch C, Adami C, Tononi G. 2014. “<a href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1003966" target="_blank">Evolution of Integrated Causal Structures in Animats Exposed to Environments of Increasing Complexity</a>.” <em>PLoS computational biology</em>, 10 (12), pp. e1003966.
               
   // Online/Offline
   // script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')

@@ -8,7 +8,7 @@ class Chart
     if args.transform? then @_args.data = args.data.map(args.transform)
     @_renderedData = [args.name]
       .concat(null for d in args.data)
-    @_shadowData = ['Shadow']
+    @_shadowData = ["#{args.name} Preview"]
       .concat(@_args.data)
     config =
       bindto: args.bindto
@@ -49,7 +49,7 @@ class Chart
       legend:
         show: false
     config.data.colors[args.name] = args.color
-    config.data.colors['Shadow'] = '#ccc'
+    config.data.colors["#{args.name} Preview"] = '#ccc'
     config.axis.y.min = args.min
     config.axis.y.max = args.max
     if args.grid? then config.grid = args.grid

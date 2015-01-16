@@ -38,8 +38,8 @@ blockColor = (block) ->
   else
     return colors.block
 
-
 # =====================================================================
+
 
 # Declare the canvas.
 svg = d3.select CONTAINER_SELECTOR
@@ -51,6 +51,7 @@ svg = d3.select CONTAINER_SELECTOR
 rects = svg
   .append 'svg:g'
     .selectAll 'rect'
+
 
 # Update game (call when needed).
 # =====================================================================
@@ -69,12 +70,6 @@ update = ->
       .attr 'width', (block) ->
         block.width * GRID_WIDTH
       .attr 'height', GRID_HEIGHT
-      .on 'mouseover', (block) ->
-        # Enlarge target block
-        d3.select(this).attr 'transform', 'scale(1.1)'
-      .on 'mouseout', (block) ->
-        # Unenlarge target block
-        d3.select(this).attr 'transform', ''
 
   # Update existing blocks.
   # Note: since we appended to the enter selection, this will be applied to the

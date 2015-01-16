@@ -22,6 +22,17 @@ displayPauseButton = ->
       .addClass('glyphicon-pause')
 
 
+MIN_DELAY = 10
+MAX_DELAY = 510
+DELAY_STEP = 50
+
+MIN_SPEED = 1
+MAX_SPEED = 10
+
+# Converts a speed, from 1 to 10, to a delay in milliseconds.
+speedToDelay = (speed) -> MIN_DELAY + DELAY_STEP * (MAX_SPEED - speed)
+
+
 class Animation
   constructor: (config) ->
     @render = config.render
@@ -29,26 +40,22 @@ class Animation
     @timestepSliderStep = config.timestepSliderStep
     @onReset = config.reset or ->
     @timestepFormatter = config.timestepFormatter
+    @speed = config.speed or 8
     @speedMultiplier = config.speedMultiplier or 1
 
-    @speed = 110
     @nextFrame = 0
     @timeout = 0
     @running = false
     @finished = false
 
-
     # Initialize sliders.
     speedSlider.slider(
       id: 'speed-slider'
-      reversed: true
-      min: 10
-      max: 510
-      step: 50
+      min: MIN_SPEED
+      max: MAX_SPEED
+      step: 1
       value: @speed
-      formatter: (value) ->
-        scale = d3.scale.linear().domain([@min, @max]).range([10, 1])
-        return "Speed: #{d3.round(scale(value), 0)}"
+      formatter: (value) -> "Speed: #{value}"
     )
     timestepSlider.slider(
       id: 'timestep-slider'
@@ -100,7 +107,7 @@ class Animation
   animate: =>
     unless @finished
       @tick()
-      @timeout = setTimeout(@animate, @speed * (1 / @speedMultiplier))
+      @timeout = setTimeout(@animate, speedToDelay(@speed) * (1 / @speedMultiplier))
     else
       @pause()
 

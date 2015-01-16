@@ -49,8 +49,6 @@ connectivityToGraph = (cm) ->
   return graph
 
 $(document).ready ->
-
-  console.log window.ANIMAT_NETWORK_CONFIG
   # Configure network.
   if window.ANIMAT_NETWORK_CONFIG
     network.CONFIG = window.ANIMAT_NETWORK_CONFIG
@@ -60,7 +58,6 @@ $(document).ready ->
 
   # Initialize network.
   network.load(connectivityToGraph(initialConnectivityMatrix))
-
   if network.CONFIG is 'EVOLUTION'
     console.log "Initializing evolution animation."
     evolutionAnimation.init(network, connectivityToGraph)

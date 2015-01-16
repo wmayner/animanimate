@@ -75,6 +75,8 @@ exports.init = (network, connectivityToGraph) ->
       render: render
       reset: reset
       numFrames: generations.length
+      speed: 6
+      speedMultiplier: 1
       timestepFormatter: (timestep) ->
         "Generation #{timestep * GENERATION_STEP}"
       timestepSliderStep: 1

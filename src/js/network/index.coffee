@@ -1,5 +1,5 @@
 ###
-# network/game-network.coffee
+# network/index.coffee
 ###
 
 Graph = require './graph'
@@ -7,11 +7,8 @@ colors = require '../colors'
 
 # This determines behavior that differs between evolution and game display.
 exports.CONFIG = undefined
-
-exports.SENSORS = [0, 1]
-exports.HIDDEN = [2, 3, 4, 5]
-exports.MOTORS = [6, 7]
-
+# Remember to set this once you have loaded the json data.
+exports.nodeTypes = undefined
 
 CONTAINER_SELECTOR = '#network-container'
 
@@ -25,16 +22,26 @@ NODE_RADIUS = 25
 
 # Helpers
 # =====================================================================
+# Alphabet for letter labels of nodes.
+ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+
+getLabel = (index) ->
+  if index in exports.nodeTypes.sensors
+    return 'S' + ((index % exports.nodeTypes.sensors.length) + 1)
+  if index in exports.nodeTypes.hidden
+    return ALPHABET[index % exports.nodeTypes.hidden.length]
+  if index in exports.nodeTypes.motors
+    return 'M' + ((index % exports.nodeTypes.motors.length) + 1)
 
 # Color nodes based on role in the animat.
 nodeColor = (node) ->
   if graph.getAllEdgesOf(node._id).length is 0
     return colors.node.other
-  if node.index in exports.SENSORS
+  if node.index in exports.nodeTypes.sensors
     return colors.node.sensor
-  else if node.index in exports.HIDDEN
+  else if node.index in exports.nodeTypes.hidden
     return colors.node.hidden
-  else if node.index in exports.MOTORS
+  else if node.index in exports.nodeTypes.motors
     return colors.node.motor
   else
     return colors.node.other
@@ -215,10 +222,24 @@ force = d3.layout.force()
     .on 'tick', tick
 update()
 
+exports.WIDTH = width
 
 exports.load = (newGraph) ->
   graph = newGraph
   update()
+
+exports.connectivityToGraph = (cm, positions) ->
+  graph = new Graph()
+  for i in [0...cm.length]
+    node = graph.addNode(positions[i])
+    node.label = getLabel(node.index)
+  for i in [0...cm.length]
+    for j in [0...cm[i].length]
+      if cm[i][j]
+        # In the Matlab code, connectivity matrices use the j --> i
+        # convention.
+        graph.addEdge(j, i)
+  return graph
 
 
 # Copyright (c) 2013-2014 Ross Kirsling

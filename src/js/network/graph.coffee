@@ -44,11 +44,6 @@ graph.removeEdge('A', 'B'); // => the edge object removed
 - edgeSize: total number of edges.
 ###
 
-# Alphabet for letter labels of nodes.
-LABELS = ['S1', 'S2', 'A', 'B', 'C', 'D', 'M1', 'M2', 'I', 'J', 'K', 'L', 'M',
-          'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-
-
 class Graph
 
   constructor: ->
@@ -73,7 +68,6 @@ class Graph
       _outEdges: {}
       _inEdges: {}
       index: @nodeSize
-      label: LABELS[@nodeSize]
       on: 0
       mechanism: 'MAJ'
       reflexive: false
@@ -124,11 +118,10 @@ class Graph
         @removeEdge inEdgeId, id
       @nodeSize--
       delete @_nodes[id]
-    # Reassign indices/labels so they're always consecutive integers/letters.
+    # Reassign indices so they're always consecutive integers.
     @forEachNode (node) ->
       if node.index > nodeToRemove.index
         node.index--
-        node.label = LABELS[node.index]
     return nodeToRemove
 
   addEdge: (sourceId, targetId, weight = 1) ->

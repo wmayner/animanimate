@@ -23,18 +23,16 @@ exports.init = (network, positions, trials) ->
   # Initialize network.
   animat = network.connectivityToGraph(trials.connectivityMatrix, positions)
   network.load(animat)
-  # Maybe this is unnecessary. Ask Will.
-  network.nodeType = trials.nodeTypes
 
   # Animation functions.
   renderSensors = (data, timestep) ->
     # Color Sensors according to on/off.
     state = data.lifeTable[timestep]
-    for i in network.nodeType.sensors
+    for i in network.nodeTypes.sensors
       node = animat.getNodeByIndex(i)
       animat.setState(node, state[i])
     # Reset the hidden and motors.
-    for i in network.nodeType.hidden.concat(network.nodeType.motors)
+    for i in network.nodeTypes.hidden.concat(network.nodeTypes.motors)
       node = animat.getNodeByIndex(i)
       animat.resetNode(node)
     # Update network display.
@@ -44,11 +42,11 @@ exports.init = (network, positions, trials) ->
   renderHidden = (data, timestep) ->
     # Color Hidden units and Motors according to on/off.
     state = data.lifeTable[timestep]
-    for i in network.nodeType.hidden.concat(network.nodeType.motors)
+    for i in network.nodeTypes.hidden.concat(network.nodeTypes.motors)
        node = animat.getNodeByIndex(i)
        animat.setState(node, state[i])
     # Reset the sensors.
-    for i in network.nodeType.sensors
+    for i in network.nodeTypes.sensors
       node = animat.getNodeByIndex(i)
       animat.resetNode(node)
     # Update the network display.

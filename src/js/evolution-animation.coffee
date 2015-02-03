@@ -34,7 +34,7 @@ exports.init = (network, positions, generations) ->
       color: FITNESS_COLOR
       min: FITNESS_RANGE[0]
       max: FITNESS_RANGE[1]
-      transform: (fitness) -> fitness / MAX_FITNESS
+      dataTransform: (fitness) -> fitness / MAX_FITNESS
       xTickFormat: (x) -> d3.round(x * GENERATION_STEP, 0)
     new Chart
       name: 'Phi'

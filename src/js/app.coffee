@@ -7,6 +7,7 @@ colors = require './colors'
 
 evolutionAnimation = require './evolution-animation'
 gameAnimation = require './game-animation'
+openEvolutionAnimation = require './open-evolution-animation'
 
 initialConnectivityMatrix = [
   [0,0,0,0,0,0,0,0]
@@ -75,3 +76,9 @@ $(document).ready ->
       positions = getPositions(json.nodeTypes)
       network.nodeTypes = json.nodeTypes
       gameAnimation.init(network, positions, json)
+  else if network.CONFIG is 'OPENEVOLUTION'
+    console.log "Initializing open-evolution animation."
+    $.getJSON 'data/Animat32.json', (json) ->
+      positions = getPositions(json.nodeTypes)
+      network.nodeTypes = json.nodeTypes
+      openEvolutionAnimation.init(network, positions, json)

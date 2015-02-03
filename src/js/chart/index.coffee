@@ -5,7 +5,7 @@
 class Chart
   constructor: (args) ->
     @_args = args
-    if args.transform? then @_args.data = args.data.map(args.transform)
+    if args.dataTransform? then @_args.data = args.data.map(args.dataTransform)
     @_renderedData = [args.name]
       .concat(null for d in args.data)
     @_shadowData = ["#{args.name} Preview"]

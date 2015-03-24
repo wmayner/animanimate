@@ -69,10 +69,10 @@ exports.init = (network, positions, trials) ->
           # Move block.
           environment.updateBlocks()
       when 1
-        # Update Senso.rs
+        # Update sensors
         renderSensors(trials.Trial[trial], timestep)
       when 2
-        # Update hidden and motors.
+        # Update hidden units and motors.
         renderHidden(trials.Trial[trial], timestep)
       else
         # Move animat.

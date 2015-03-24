@@ -130,13 +130,6 @@ class Game
     ###
     (@_blocks[id] for id in Object.keys(@_blocks))
 
-  getBlockByIndex: (index) ->
-    result = null
-    @forEachBlock (block, id) ->
-      if block.index is index
-        result = block
-    return result
-
   removeBlock: (id) ->
     ###
     _Returns:_ the block object removed, or undefined if it didn't exist in the
@@ -147,32 +140,5 @@ class Game
     @blockSize--
     delete @_blocks[id]
     return blockToRemove
-
-  forEachBlock: (operation) ->
-    ###
-    Traverse through the graph in an arbitrary manner, visiting each block once.
-    Pass a function of the form `fn(blockObject, blockId)`.
-
-    _Returns:_ undefined.
-    ###
-    for own blockId, blockObject of @_blocks
-      operation blockObject, blockId
-    # Manually return. This is to avoid CoffeeScript's nature of returning an
-    # expression, unneeded and wastful (array) in this case.
-    return
-
-  getBlocksByIndex: ->
-    return (@getBlockByIndex(index) for index in [0...@blockSize])
-
-  mapByIndex: (operation) ->
-    return (operation(block) for block in @getBlocksByIndex())
-
-  # Return the given property for each block, in order of block indices.
-  getBlockProperties: (property, block_indices) ->
-    if block_indices?
-      return (block[property] for block in @getBlocksByIndex() when block.index in block_indices)
-    else
-      return (block[property] for block in @getBlocksByIndex())
-
 
 module.exports = Game

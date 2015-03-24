@@ -17,26 +17,7 @@ ENVIRONMENT_HEIGHT = 36
 GRID_WIDTH = width / ENVIRONMENT_WIDTH
 GRID_HEIGHT = height / ENVIRONMENT_HEIGHT
 
-
 game = undefined
-
-
-# Helpers
-# =====================================================================
-
-# TODO use classes and CSS instead. Somehow that's broken... when blocks wrap
-# they acquire the '.animat' class magically. Game needs serious
-# refactoring/fixing.
-
-# Color boxes based on role in the animat.
-blockColor = (block) ->
-  if block.isAnimat
-    return colors.animat
-  else
-    return colors.block
-
-# =====================================================================
-
 
 # Declare the canvas.
 svg = d3.select CONTAINER_SELECTOR
@@ -54,32 +35,26 @@ rects = svg
 # =====================================================================
 update = ->
 
-  # Update the block list.
-  blocks = game.getBlocks().concat(game.getAnimat())
+  # Update the cell list
+  rects = rects.data game.getCells()
 
-  # Bind newly-fetched boxes to rects selection.
-  rects = rects.data blocks
-
-  # Add new blocks.
+  # Add new cells.
   rects.enter()
     .append 'svg:rect'
-      .attr 'class', 'block'
-      .attr 'width', (block) ->
-        block.width * GRID_WIDTH
+      .attr 'class', 'cell'
+      .attr 'width', GRID_WIDTH
       .attr 'height', GRID_HEIGHT
 
-  # Update existing blocks.
+  # Update existing cells.
   # Note: since we appended to the enter selection, this will be applied to the
   # new rect elements we just created.
   rects
-      .attr 'width', (block) -> block.width * GRID_WIDTH
-      .attr 'x', (block) -> block.position.x * GRID_WIDTH
-      .attr 'y', (block) -> block.position.y * GRID_HEIGHT
-      .style 'fill', blockColor
-      .style 'opacity', (block) ->
-        if block.on then 0.2 else 1
+      .attr 'x', (cell) -> cell.coords.x * GRID_WIDTH
+      .attr 'y', (cell) -> cell.coords.y * GRID_HEIGHT
+      .style 'fill', (cell) -> colors[cell.type]
+      .style 'opacity', (cell) -> if cell.on then 0.2 else 1
 
-  # Remove old boxes.
+  # Remove old cells.
   rects.exit().remove()
 # =====================================================================
 
@@ -88,8 +63,8 @@ exports.load = (newGame) ->
   game = newGame
   update()
 
-exports.updateBlocks = ->
-  game.updateBlocks()
+exports.updateBlock = ->
+  game.updateBlock()
   update()
 
 exports.updateAnimat = ->

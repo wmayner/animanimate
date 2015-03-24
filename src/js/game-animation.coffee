@@ -67,7 +67,7 @@ exports.init = (network, positions, trials) ->
           environment.load(game)
         else
           # Move block.
-          environment.updateBlocks()
+          environment.updateBlock()
       when 1
         # Update sensors
         renderSensors(trials.Trial[trial], timestep)

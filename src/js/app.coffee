@@ -30,7 +30,7 @@ positions =
     6: {x: 197, y: 520, fixed: true}
     7: {x: 331, y: 520, fixed: true}
 
-getPositions = (nodeTypes) -> 
+getPositions = (nodeTypes) ->
   for i in nodeTypes.sensors
     positions[i].x = (i % nodeTypes.sensors.length + 1) * (network.WIDTH / (nodeTypes.sensors.length + 1))
     positions[i].y = 88
@@ -43,7 +43,7 @@ getPositions = (nodeTypes) ->
       if ((i % numHidden) + 1) < ((numHidden+1) / 2)
         numNodesInRow = Math.floor(numHidden / 2)
         if (numHidden % 2) > 0 then positions[i].y = 250 else positions[i].y = 225
-      else 
+      else
         numNodesInRow = Math.ceil(numHidden / 2)
         if (numHidden % 2) > 0 then positions[i].y = 350 else positions[i].y = 375
       positions[i].x = ((i % numNodesInRow) + 1) * ((network.WIDTH + 400) / (numNodesInRow + 1)) - 200
@@ -72,7 +72,7 @@ $(document).ready ->
       evolutionAnimation.init(network, positions, json.generations)
   else if network.CONFIG is 'GAME'
     console.log "Initializing game animation."
-    $.getJSON 'data/AnimatBlockTrials32_59904.json', (json) ->
+    $.getJSON 'data/game.json', (json) ->
       positions = getPositions(json.nodeTypes)
       network.nodeTypes = json.nodeTypes
       gameAnimation.init(network, positions, json)

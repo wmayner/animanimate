@@ -1,11 +1,7 @@
-sh = require 'execSync'
-mkdirp = require 'mkdirp'
-path = require 'path'
+del = require 'del'
 gulp = require 'gulp'
-gutil = require 'gulp-util'
-stylus = require 'gulp-stylus'
+shell = require 'gulp-shell'
 watch = require 'gulp-watch'
-rimraf = require 'gulp-rimraf'
 
 SRC_DIR = './src'
 LIB_DIR = './lib'
@@ -13,7 +9,6 @@ APP_DIR = './app'
 
 ENTRYPOINT = "#{LIB_DIR}/app.js"
 
-# TODO watch stylus
 STYLUS_DIR = "#{SRC_DIR}/css"
 STYLUS = "#{STYLUS_DIR}/**/*.styl"
 
@@ -21,97 +16,45 @@ JADE_DIR = SRC_DIR
 JADE = "#{JADE_DIR}/**/*.jade"
 
 COFFEE_DIR = "#{SRC_DIR}/js"
-COFFEE = "#{COFFEE_DIR}/**/*.coffee"
+COFFEE_FILES = "#{COFFEE_DIR}/**/*.coffee"
+COFFEE_CMD = './node_modules/coffee-script/bin/coffee'
 
-###
-Helpers
-###
+gulp.task 'clean:html', -> del "#{APP_DIR}/*.html"
 
-compileJade = (inputDir, outputDir) ->
-  jade = './node_modules/jade/bin/jade.js'
-  cmd = sh.exec "#{jade} #{inputDir} -o #{outputDir}"
-  gutil.log cmd.stdout
-  gutil.log "  [jade] Compiled #{inputDir} to #{outputDir}"
+gulp.task 'clean:js', -> del ["#{LIB_DIR}/*", "#{APP_DIR}/js/*.js"]
 
-compileStylus = (input, outputDir) ->
-  gulp.src(input)
-    .pipe(stylus({linenos: true})).on('error', gutil.log)
-    .pipe(gulp.dest(outputDir))
-    .on 'finish', (err) ->
-      gutil.log err if err
-      gutil.log "  [stylus] Compiled #{input} to #{outputDir}"
+gulp.task 'clean:css', -> del "#{APP_DIR}/css/*.css"
 
-compileCoffee = (inputDir, outputDir) ->
-  coffee = './node_modules/coffee-script/bin/coffee'
-  cmd = sh.exec "#{coffee} -c -o #{outputDir} #{inputDir}"
-  gutil.log cmd.stdout
-  gutil.log "  [coffee] Compiled #{inputDir} to #{outputDir}"
-
-runBrowserify = (input, output) ->
-  mkdirp path.dirname(output), (err) ->
-    browserify = './node_modules/browserify/bin/cmd.js'
-    cmd = sh.exec "#{browserify} #{input} --no-cache -o #{output}"
-    gutil.log cmd.stdout
-    gutil.log "  [browserify] Compiled #{input} to #{output}"
-
-###
-# Clean
-###
-
-gulp.task 'clean-html', ->
-  gulp.src([
-      "#{APP_DIR}/*.html"
-  ], {read: false}).pipe(rimraf())
-
-gulp.task 'clean-js', ->
-  gulp.src([
-      "#{LIB_DIR}/*"
-      "#{APP_DIR}/js/*.js"
-  ], {read: false}).pipe(rimraf())
-
-gulp.task 'clean-css', ->
-  gulp.src([
-      "#{APP_DIR}/css/*.css"
-  ], {read: false}).pipe(rimraf())
-
-# Clean all built files
 gulp.task 'clean', ['clean-html', 'clean-js', 'clean-css']
 
-###
-# Build
-###
+gulp.task 'compile:jade', ['clean:html'], shell.task(
+  "./node_modules/jade/bin/jade.js #{JADE_DIR} -o #{APP_DIR}"
+)
 
-gulp.task 'jade', ['clean-html'], -> compileJade JADE_DIR, APP_DIR
+gulp.task 'compile:stylus', ['clean:css'], shell.task(
+  # Compile with line numbers and sourcemaps
+  "./node_modules/stylus/bin/stylus -l -m #{STYLUS_DIR}/app.styl -o #{APP_DIR}/css"
+)
 
-gulp.task 'stylus', ['clean-css'], ->
-  compileStylus "#{STYLUS_DIR}/app.styl", "#{APP_DIR}/css"
+gulp.task 'compile:coffee', ['clean:js'], shell.task(
+  "#{COFFEE_CMD} -c -o #{LIB_DIR} #{COFFEE_DIR}",
+)
 
-gulp.task 'coffee', ['clean-js'], -> compileCoffee COFFEE_DIR, LIB_DIR
+gulp.task 'browserify', ['compile:coffee'], shell.task(
+  "./node_modules/browserify/bin/cmd.js #{ENTRYPOINT} --no-cache -o #{APP_DIR}/js/app.js",
+)
 
-gulp.task 'browserify', ['coffee'], ->
-  runBrowserify ENTRYPOINT, "#{APP_DIR}/js/app.js",
+gulp.task 'build', ['compile:jade', 'compile:stylus', 'browserify']
 
-# Build everything
-gulp.task 'build', ['jade', 'stylus', 'browserify']
+gulp.task 'watch:jade', ['compile:jade'], ->
+  gulp.watch(JADE, ['compile:jade'])
 
-###
-# Watch
-###
+gulp.task 'watch:stylus', ['compile:stylus'], ->
+  gulp.watch(STYLUS, ['compile:stylus'])
 
-gulp.task 'watch-jade', ['jade'], ->
-  gulp.watch(JADE, ['jade'])
-    .on('error', gutil.log)
+gulp.task 'watch:coffee', ['browserify'], ->
+  gulp.watch(COFFEE_FILES, ['browserify'])
 
-gulp.task 'watch-stylus', ['stylus'], ->
-  gulp.watch(STYLUS, ['stylus'])
-    .on('error', gutil.log)
+gulp.task 'dev', ['build', 'watch:jade', 'watch:stylus', 'watch:coffee']
 
-gulp.task 'watch-coffee', ['browserify'], ->
-  gulp.watch(COFFEE, ['browserify'])
-    .on('error', gutil.log)
-
-# Watch everything
-gulp.task 'watch', ['build', 'watch-jade', 'watch-stylus', 'watch-coffee']
-
-# Watch everything by default
-gulp.task 'default', ['watch']
+gulp.task 'default', ['dev']

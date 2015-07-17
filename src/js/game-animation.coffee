@@ -6,28 +6,29 @@
 network = require './network'
 Animation = require './animation'
 environment = require './environment'
-Game = require './environment/game'
 
-NUM_SUBFRAMES = 4
+NUM_SUBFRAMES = 3
 
-exports.init = (network, positions, trials) ->
+exports.init = (network, positions, json) ->
+  # Tell the environment the game parameters.
+  environment.loadConfig(json.config)
 
-  # The number of timesteps in a game should be 36, equal to the height of
-  # the environment.
-  gameLength = trials.Trial[1].lifeTable.length
+  # The number of timesteps in a game should be equal to the height of the
+  # environment.
+  gameLength = json.config.WORLD_HEIGHT
 
-  trial = 0
+  trialNum = 0
 
-  getTrial = -> trial
+  getTrialNum = -> trialNum
 
   # Initialize network.
-  animat = network.connectivityToGraph(trials.connectivityMatrix, positions)
+  animat = network.connectivityToGraph(json.cm, positions)
   network.load(animat)
 
   # Animation functions.
-  renderSensors = (data, timestep) ->
+  renderSensors = (frame) ->
     # Color Sensors according to on/off.
-    state = data.lifeTable[timestep]
+    state = frame.animat
     for i in network.nodeTypes.sensors
       node = animat.getNodeByIndex(i)
       animat.setState(node, state[i])
@@ -39,9 +40,9 @@ exports.init = (network, positions, trials) ->
     network.load(animat)
     return
 
-  renderHidden = (data, timestep) ->
-    # Color Hidden units and Motors according to on/off.
-    state = data.lifeTable[timestep]
+  renderHiddenAndMotors = (frame) ->
+    # Color hidden and motor units according to on/off.
+    state = frame.animat
     for i in network.nodeTypes.hidden.concat(network.nodeTypes.motors)
        node = animat.getNodeByIndex(i)
        animat.setState(node, state[i])
@@ -54,29 +55,26 @@ exports.init = (network, positions, trials) ->
     return
 
   render = (nextFrame) ->
-    trial = nextFrame // (NUM_SUBFRAMES * gameLength)
-    # Timestep within a single game.
+    # Trial number.
+    trialNum = nextFrame // (NUM_SUBFRAMES * gameLength)
+    # Current trial.
+    trial = json.trials[trialNum]
+    # Timestep within the trial.
     timestep = (nextFrame // NUM_SUBFRAMES) % gameLength
-    # Timestep within a game timestep.
+    # Subtimestep within a timestep.
     internalTimestep = nextFrame % NUM_SUBFRAMES
+    # Current game state.
+    gameState = trial.timesteps[timestep]
     switch internalTimestep
       when 0
-        if timestep is 0
-          # Beginning of game
-          game = new Game(trials.Trial[trial], trials.blockSize[trial])
-          environment.load(game)
-        else
-          # Move block.
-          environment.updateBlock()
+        # Update game state.
+        environment.update(trial.timesteps[timestep])
       when 1
-        # Update sensors
-        renderSensors(trials.Trial[trial], timestep)
+        # Update sensors.
+        renderSensors(trial.timesteps[timestep])
       when 2
         # Update hidden units and motors.
-        renderHidden(trials.Trial[trial], timestep)
-      else
-        # Move animat.
-        environment.updateAnimat()
+        renderHiddenAndMotors(trial.timesteps[timestep])
     return
 
   # Initialize animation.
@@ -84,10 +82,10 @@ exports.init = (network, positions, trials) ->
     render: render
     # 4 (move block, update sensors, updated hidden, move animat)
     # * number of trials * 36
-    numFrames: NUM_SUBFRAMES * trials.Trial.length * gameLength - 1
+    numFrames: NUM_SUBFRAMES * json.trials.length * json.config.WORLD_HEIGHT - 1
     speed: 8
     speedMultiplier: 2
-    timestepFormatter: (timestep) -> "Trial #{getTrial()}"
+    timestepFormatter: (timestep) -> "Trial #{getTrialNum()}"
     timestepSliderStep: NUM_SUBFRAMES * gameLength
 
   animation.play()

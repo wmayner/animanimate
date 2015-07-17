@@ -2,7 +2,6 @@
 # environment/index.coffee
 ###
 
-Game = require './game'
 colors = require '../colors'
 
 
@@ -11,13 +10,25 @@ $container = $(CONTAINER_SELECTOR)
 height = 616
 width = 528
 
-ENVIRONMENT_WIDTH = 16
-ENVIRONMENT_HEIGHT = 36
 
-GRID_WIDTH = width / ENVIRONMENT_WIDTH
-GRID_HEIGHT = height / ENVIRONMENT_HEIGHT
+wrap = (x) -> (config.WORLD_WIDTH + x) % config.WORLD_WIDTH
 
-game = undefined
+getCellsFromFrame = (frame) ->
+  # Block cells
+  ({
+      coords: {x: i, y: frame.num},
+      type: 'block'
+   } for i in [0...config.WORLD_WIDTH] when frame.world[i])
+  # Animat cells
+  .concat({
+    coords: {x: wrap(frame.pos + i), y: config.WORLD_HEIGHT - 1}
+    type: 'animat'
+  } for i in [0...3])
+
+
+GRID_WIDTH = undefined
+GRID_HEIGHT = undefined
+config = undefined
 
 # Declare the canvas.
 svg = d3.select CONTAINER_SELECTOR
@@ -30,13 +41,12 @@ rects = svg
   .append 'svg:g'
     .selectAll 'rect'
 
-
 # Update game (call when needed).
 # =====================================================================
-update = ->
+update = (frame) ->
 
   # Update the cell list
-  rects = rects.data game.getCells()
+  rects = rects.data getCellsFromFrame(frame)
 
   # Add new cells.
   rects.enter()
@@ -58,15 +68,10 @@ update = ->
   rects.exit().remove()
 # =====================================================================
 
+exports.update = (frame) ->
+  update(frame)
 
-exports.load = (newGame) ->
-  game = newGame
-  update()
-
-exports.updateBlock = ->
-  game.updateBlock()
-  update()
-
-exports.updateAnimat = ->
-  game.updateAnimat()
-  update()
+exports.loadConfig = (newConfig) ->
+  config = newConfig
+  GRID_WIDTH = width / config.WORLD_WIDTH
+  GRID_HEIGHT = height / config.WORLD_HEIGHT

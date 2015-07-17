@@ -30,15 +30,15 @@ positions =
     6: {x: 197, y: 520, fixed: true}
     7: {x: 331, y: 520, fixed: true}
 
-getPositions = (nodeTypes) ->
-  for i in nodeTypes.sensors
-    positions[i].x = (i % nodeTypes.sensors.length + 1) * (network.WIDTH / (nodeTypes.sensors.length + 1))
+getPositions = (config) ->
+  for i in config.SENSOR_INDICES
+    positions[i].x = (i % config.NUM_SENSORS + 1) * (network.WIDTH / (config.NUM_SENSORS + 1))
     positions[i].y = 88
 
-  for i in nodeTypes.hidden
+  for i in config.HIDDEN_INDICES
     # Make 2 rows if there are more than 2 hidden nodes.
-    if nodeTypes.hidden.length > 2
-      numHidden = nodeTypes.hidden.length
+    if config.HIDDEN_INDICES.length > 2
+      numHidden = config.HIDDEN_INDICES.length
       # If numHidden does not divide by 2, put less nodes in upper row.
       if ((i % numHidden) + 1) < ((numHidden+1) / 2)
         numNodesInRow = Math.floor(numHidden / 2)
@@ -51,8 +51,8 @@ getPositions = (nodeTypes) ->
       positions[i].x = (i % numHidden + 1) * (network.WIDTH / (numHidden + 1))
       positions[i].y = 300
 
-  for i in nodeTypes.motors
-    positions[i].x = (i % nodeTypes.motors.length + 1) * (network.WIDTH / (nodeTypes.motors.length + 1))
+  for i in config.MOTOR_INDICES
+    positions[i].x = (i % config.NUM_MOTORS + 1) * (network.WIDTH / (config.NUM_MOTORS + 1))
     positions[i].y = 520
   return positions
 
@@ -73,8 +73,14 @@ $(document).ready ->
   else if network.CONFIG is 'GAME'
     console.log "Initializing game animation."
     $.getJSON 'data/game.json', (json) ->
-      positions = getPositions(json.nodeTypes)
-      network.nodeTypes = json.nodeTypes
+      console.log "Loaded game with configuration:"
+      console.log json.config
+      positions = getPositions(json.config)
+      nodeTypes =
+        'sensors': json.config.SENSOR_INDICES
+        'hidden': json.config.HIDDEN_INDICES
+        'motors': json.config.MOTOR_INDICES
+      network.nodeTypes = nodeTypes
       gameAnimation.init(network, positions, json)
   else if network.CONFIG is 'OPENEVOLUTION'
     console.log "Initializing open-evolution animation."

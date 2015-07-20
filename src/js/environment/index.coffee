@@ -3,6 +3,7 @@
 ###
 
 colors = require '../colors'
+utils = require '../utils'
 
 
 CONTAINER_SELECTOR = '#environment-container'
@@ -13,17 +14,34 @@ width = 528
 
 wrap = (x) -> (config.WORLD_WIDTH + x) % config.WORLD_WIDTH
 
+overlap = (frame) ->
+  return frame.num is config.WORLD_HEIGHT - 1 and
+    utils.any(frame.world[frame.pos + i] for i in [0...3])
+
+cellBlockOverlap = (cell, frame) ->
+  return frame.num is config.WORLD_HEIGHT - 1 and frame.world[cell.coords.x]
+
 getCellsFromFrame = (frame) ->
   # Block cells
-  ({
+  block = ({
       coords: {x: i, y: frame.num},
-      type: 'block'
-   } for i in [0...config.WORLD_WIDTH] when frame.world[i])
+      color: colors['block']
+  } for i in [0...config.WORLD_WIDTH] when frame.world[i])
   # Animat cells
-  .concat({
+  animat = ({
     coords: {x: wrap(frame.pos + i), y: config.WORLD_HEIGHT - 1}
-    type: 'animat'
   } for i in [0...3])
+  # Cell coloration
+  sensor_cells = if config.NUM_SENSORS is 2 then [0, 2] else [0, 1, 2]
+  for cell, i in animat
+    if i in sensor_cells
+      cell.color = colors['animat']['sensor'][frame.world[cell.coords.x]]
+    else
+      cell.color = colors['animat']['body']
+    if cellBlockOverlap(cell, frame)
+      cell.color = colors['animat']['catch']
+  # Return all cells
+  return block.concat(animat)
 
 
 GRID_WIDTH = undefined
@@ -61,11 +79,11 @@ update = (frame) ->
   rects
       .attr 'x', (cell) -> cell.coords.x * GRID_WIDTH
       .attr 'y', (cell) -> cell.coords.y * GRID_HEIGHT
-      .style 'fill', (cell) -> colors[cell.type]
-      .style 'opacity', (cell) -> if cell.on then 0.2 else 1
+      .style 'fill', (cell) -> cell.color
 
   # Remove old cells.
   rects.exit().remove()
+
 # =====================================================================
 
 exports.update = (frame) ->

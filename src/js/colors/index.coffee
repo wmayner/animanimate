@@ -16,4 +16,9 @@ module.exports =
     line: d3.rgb 0, 0, 0
     endpoint: d3.rgb 130, 130, 130
   block: '#444'
-  animat: solarized.cyan
+  animat:
+    sensor:
+      0: solarized.blue
+      1: solarized.green
+    body: '#444'
+    catch: solarized.magenta

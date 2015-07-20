@@ -2,7 +2,7 @@
 # graph.coffee
 ###
 
-utils = require './utils'
+utils = require '../utils'
 
 ###
 Graph implemented as a modified incidence list. O(1) for every typical

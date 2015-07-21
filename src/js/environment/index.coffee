@@ -39,7 +39,7 @@ getCellsFromFrame = (frame) ->
     else
       cell.color = colors['animat']['body']
     if cellBlockOverlap(cell, frame)
-      cell.color = colors['animat']['catch']
+      cell.color = colors['animat']['overlap']
   # Return all cells
   return block.concat(animat)
 
@@ -55,13 +55,21 @@ svg = d3.select CONTAINER_SELECTOR
     .attr 'height', height
     .attr 'align', 'center'
 
+# Background.
+background = svg.append 'rect'
+  .attr 'width', '100%'
+  .attr 'height', '100%'
+  .attr 'fill', 'white'
+  .attr 'opacity', 0
+
 rects = svg
   .append 'svg:g'
     .selectAll 'rect'
 
 # Update game (call when needed).
 # =====================================================================
-update = (frame) ->
+update = (trial, timestep) ->
+  frame = trial.timesteps[timestep]
 
   # Update the cell list
   rects = rects.data getCellsFromFrame(frame)
@@ -84,10 +92,18 @@ update = (frame) ->
   # Remove old cells.
   rects.exit().remove()
 
+  isLastTimestep = (timestep == config.WORLD_HEIGHT - 1)
+  background.attr 'fill', ->
+    if isLastTimestep
+      return if trial.correct then colors['success'] else colors['failure']
+    else
+      'white'
+  background.attr 'opacity', -> if isLastTimestep then 0.3 else 0
+
 # =====================================================================
 
-exports.update = (frame) ->
-  update(frame)
+exports.update = (trial, timestep) ->
+  update(trial, timestep)
 
 exports.loadConfig = (newConfig) ->
   config = newConfig

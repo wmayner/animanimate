@@ -68,7 +68,7 @@ exports.init = (network, positions, json) ->
     switch internalTimestep
       when 0
         # Update game state.
-        environment.update(trial.timesteps[timestep])
+        environment.update(trial, timestep)
       when 1
         # Update sensors.
         renderSensors(trial.timesteps[timestep])

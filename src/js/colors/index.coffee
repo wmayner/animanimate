@@ -21,4 +21,6 @@ module.exports =
       0: solarized.blue
       1: solarized.green
     body: '#444'
-    catch: solarized.magenta
+    overlap: solarized.magenta
+  success: 'green'
+  failure: 'red'

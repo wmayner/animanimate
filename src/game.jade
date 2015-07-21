@@ -40,20 +40,6 @@ body
             a(href='/evolution.html') Evolution
           li.active(role="presentation")
             a(href='/game.html') Task Simulation
-        .animation-controls
-          .row.clearfix
-            .col-centered
-              .control-group
-                span.control-label Speed:
-                #speed-slider-container
-                  input.slider.slider-horizontal(type='text')
-                button#play-pause.btn.btn-large.btn-primary
-                  span.glyphicon.glyphicon-play
-              .control-group
-                span.control-label Trial:
-                #timestep-slider-container
-                  input.slider.slider-horizontal(type='text')
-      #timestep Trial 0    
     .row.clearfix
       .col-lg-6
         #environment-module.module
@@ -67,6 +53,22 @@ body
             .col-md-12
               h2.module-title Animat
               #network-container.module-canvas
+    .row.clearfix
+      .col-md-12
+        #timestep Trial 0    
+        .animation-controls
+          .row.clearfix
+            .col-centered
+              .control-group
+                span.control-label Trial:
+                #timestep-slider-container
+                  input.slider.slider-horizontal(type='text')
+              .control-group
+                span.control-label Speed:
+                #speed-slider-container
+                  input.slider.slider-horizontal(type='text')
+                button#play-pause.btn.btn-large.btn-primary
+                  span.glyphicon.glyphicon-play
 
   // Online/Offline
   // script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')

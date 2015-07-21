@@ -66,13 +66,13 @@ $(document).ready ->
 
   if network.CONFIG is 'EVOLUTION'
     console.log "Initializing evolution animation."
-    $.getJSON 'data/Animat15.json', (json) ->
+    $.getJSON 'data/evolutions/Animat15.json', (json) ->
       positions = getPositions(json.nodeTypes)
       network.nodeTypes = json.nodeTypes
       evolutionAnimation.init(network, positions, json.generations)
   else if network.CONFIG is 'GAME'
     console.log "Initializing game animation."
-    $.getJSON 'data/game.json', (json) ->
+    $.getJSON 'data/games/game8.json', (json) ->
       console.log "Loaded game with configuration:"
       console.log json.config
       positions = getPositions(json.config)
@@ -84,7 +84,7 @@ $(document).ready ->
       gameAnimation.init(network, positions, json)
   else if network.CONFIG is 'OPENEVOLUTION'
     console.log "Initializing open-evolution animation."
-    $.getJSON 'data/Animat32.json', (json) ->
+    $.getJSON 'data/evolutions/Animat32.json', (json) ->
       positions = getPositions(json.nodeTypes)
       network.nodeTypes = json.nodeTypes
       openEvolutionAnimation.init(network, positions, json)

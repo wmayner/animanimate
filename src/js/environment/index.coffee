@@ -30,14 +30,11 @@ getCellsFromFrame = (frame) ->
   # Animat cells
   animat = ({
     coords: {x: wrap(frame.pos + i), y: config.WORLD_HEIGHT - 1}
+    color: colors['animat']['body']
   } for i in [0...3])
-  # Cell coloration
-  sensor_cells = if config.NUM_SENSORS is 2 then [0, 2] else [0, 1, 2]
+  for loc, i in config.SENSOR_LOCATIONS
+    animat[loc].color = colors['animat']['sensor'][frame.animat[i]]
   for cell, i in animat
-    if i in sensor_cells
-      cell.color = colors['animat']['sensor'][frame.world[cell.coords.x]]
-    else
-      cell.color = colors['animat']['body']
     if cellBlockOverlap(cell, frame)
       cell.color = colors['animat']['overlap']
   # Return all cells

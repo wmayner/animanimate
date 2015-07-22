@@ -9,7 +9,7 @@ environment = require './environment'
 
 NUM_SUBFRAMES = 3
 
-exports.init = (network, positions, json) ->
+exports.init = (network, json) ->
   # Tell the environment the game parameters.
   environment.loadConfig(json.config)
 
@@ -22,7 +22,7 @@ exports.init = (network, positions, json) ->
   getTrialNum = -> trialNum
 
   # Initialize network.
-  animat = network.connectivityToGraph(json.cm, positions)
+  animat = network.connectivityToGraph(json.cm, json.config)
   network.load(animat)
 
   # Animation functions.

@@ -19,3 +19,8 @@ module.exports =
       if not element
         return false
     return true
+
+  dict: (pairs) ->
+    dict = {}
+    dict[key] = value for [key, value] in pairs
+    return dict

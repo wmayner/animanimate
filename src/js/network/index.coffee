@@ -2,6 +2,7 @@
 # network/index.coffee
 ###
 
+utils = require '../utils'
 Graph = require './graph'
 colors = require '../colors'
 
@@ -21,17 +22,57 @@ NODE_RADIUS = 25
 
 
 # Helpers
-# =====================================================================
+# =============================================================================
+
+# Get node positions.
+getPositions = (config) ->
+  positions = utils.dict([i, {fixed: true}] for i in [0...config.NUM_NODES])
+  padding = 40
+  xscale = d3.scale.linear()
+  xRange = [padding, width - padding]
+  xscale.range(xRange)
+  # Sensors and motors.
+  xscale.domain([d3.min(config.SENSOR_INDICES) - 1,
+                 d3.max(config.SENSOR_INDICES) + 1])
+  for i in config.SENSOR_INDICES
+    positions[i].x = xscale(i)
+    positions[i].y = padding
+  xscale.domain([d3.min(config.MOTOR_INDICES) - 1,
+                 d3.max(config.MOTOR_INDICES) + 1])
+  for i in config.MOTOR_INDICES
+    positions[i].x = xscale(i)
+    positions[i].y = height - padding
+  # Make rows of 2 hidden units each. If the number of hidden units is odd, the
+  # first row will have only one.
+  numHidden = config.HIDDEN_INDICES.length
+  oddHidden = numHidden % 2 is 1
+  numRows = Math.ceil(numHidden / 2)
+  yscale = d3.scale.linear()
+  yscale.range([padding, height - padding])
+  yscale.domain([-1, numRows])
+  hidden_x = [padding, width - padding]
+  for hidden in config.HIDDEN_INDICES
+    i = hidden - config.NUM_SENSORS
+    row = Math.floor(i / 2)
+    if row < 2 and oddHidden
+      positions[hidden.x] = widht / 2
+    else
+      positions[hidden].x = xRange[i % 2]
+    positions[hidden].y = yscale(row)
+  return positions
+
 # Alphabet for letter labels of nodes.
-ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
 getLabel = (index) ->
   if index in exports.nodeTypes.sensors
-    return 'S' + ((index % exports.nodeTypes.sensors.length) + 1)
+    return 'S' + (index + 1)
   if index in exports.nodeTypes.hidden
-    return ALPHABET[index % exports.nodeTypes.hidden.length]
+    return ALPHABET[index - exports.nodeTypes.sensors.length]
   if index in exports.nodeTypes.motors
-    return 'M' + ((index % exports.nodeTypes.motors.length) + 1)
+    return 'M' + (index - exports.nodeTypes.sensors.length -
+                  exports.nodeTypes.hidden.length + 1)
 
 # Color nodes based on role in the animat.
 nodeColor = (node) ->
@@ -46,7 +87,7 @@ nodeColor = (node) ->
   else
     return colors.node.other
 
-# =====================================================================
+# =============================================================================
 
 # Declare the canvas.
 svg = d3.select CONTAINER_SELECTOR
@@ -228,11 +269,12 @@ exports.load = (newGraph) ->
   graph = newGraph
   update()
 
-exports.connectivityToGraph = (cm, positions) ->
+exports.connectivityToGraph = (cm, config) ->
+  positions = getPositions(config)
   graph = new Graph()
   for i in [0...cm.length]
     node = graph.addNode(positions[i])
-    node.label = getLabel(node.index)
+    node.label = getLabel(i)
   for i in [0...cm.length]
     for j in [0...cm[i].length]
       if cm[i][j]

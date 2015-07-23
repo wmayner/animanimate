@@ -55,7 +55,7 @@ getPositions = (config) ->
     i = hidden - config.NUM_SENSORS
     row = Math.floor(i / 2)
     if row < 2 and oddHidden
-      positions[hidden.x] = widht / 2
+      positions[hidden.x] = width / 2
     else
       positions[hidden].x = xRange[i % 2]
     positions[hidden].y = yscale(row)

@@ -45,7 +45,7 @@ getPositions = (config) ->
   # Make rows of 2 hidden units each. If the number of hidden units is odd, the
   # first row will have only one.
   numHidden = config.HIDDEN_INDICES.length
-  oddHidden = numHidden % 2 is 1
+  oddHidden = numHidden % 2
   numRows = Math.ceil(numHidden / 2)
   yscale = d3.scale.linear()
   yscale.range([padding, height - padding])
@@ -53,11 +53,8 @@ getPositions = (config) ->
   hidden_x = [padding, width - padding]
   for hidden in config.HIDDEN_INDICES
     i = hidden - config.NUM_SENSORS
+    positions[hidden].x = xRange[i % 2]
     row = Math.floor(i / 2)
-    if row < 2 and oddHidden
-      positions[hidden.x] = width / 2
-    else
-      positions[hidden].x = xRange[i % 2]
     positions[hidden].y = yscale(row)
   return positions
 

@@ -10,46 +10,43 @@ environment = require './environment'
 NUM_SUBFRAMES = 3
 
 exports.init = (network, json) ->
+  config = json.config
+  trials = json.trials
   # Tell the environment the game parameters.
-  environment.loadConfig(json.config)
+  environment.loadConfig(config)
 
   # The number of timesteps in a game should be equal to the height of the
   # environment.
-  gameLength = json.config.WORLD_HEIGHT
+  gameLength = config.WORLD_HEIGHT
 
   trialNum = 0
 
   getTrialNum = -> trialNum
 
   # Initialize network.
-  animat = network.connectivityToGraph(json.cm, json.config)
+  animat = network.connectivityToGraph(json.cm, config)
   network.load(animat)
+
+  selectiveSetState = (toSet, state) ->
+    animat.forEachNode (node, id) ->
+      if node.index in toSet
+        animat.setState(node, state[node.index])
+      else
+        animat.resetNode(node)
+    return
 
   # Animation functions.
   renderSensors = (frame) ->
-    # Color Sensors according to on/off.
-    state = frame.animat
-    for i in network.nodeTypes.sensors
-      node = animat.getNodeByIndex(i)
-      animat.setState(node, state[i])
-    # Reset the hidden and motors.
-    for i in network.nodeTypes.hidden.concat(network.nodeTypes.motors)
-      node = animat.getNodeByIndex(i)
-      animat.resetNode(node)
+    # Color Sensors according to on/off and reset other nodes.
+    selectiveSetState(config.SENSOR_INDICES, frame.animat)
     # Update network display.
     network.load(animat)
     return
 
   renderHiddenAndMotors = (frame) ->
-    # Color hidden and motor units according to on/off.
-    state = frame.animat
-    for i in network.nodeTypes.hidden.concat(network.nodeTypes.motors)
-       node = animat.getNodeByIndex(i)
-       animat.setState(node, state[i])
-    # Reset the sensors.
-    for i in network.nodeTypes.sensors
-      node = animat.getNodeByIndex(i)
-      animat.resetNode(node)
+    # Color Sensors according to on/off and reset other nodes.
+    selectiveSetState(config.HIDDEN_INDICES.concat(config.MOTOR_INDICES),
+                      frame.animat)
     # Update the network display.
     network.load(animat)
     return
@@ -58,7 +55,7 @@ exports.init = (network, json) ->
     # Trial number.
     trialNum = nextFrame // (NUM_SUBFRAMES * gameLength)
     # Current trial.
-    trial = json.trials[trialNum]
+    trial = trials[trialNum]
     # Timestep within the trial.
     timestep = (nextFrame // NUM_SUBFRAMES) % gameLength
     # Subtimestep within a timestep.
@@ -82,7 +79,7 @@ exports.init = (network, json) ->
     render: render
     # 4 (move block, update sensors, updated hidden, move animat)
     # * number of trials * 36
-    numFrames: NUM_SUBFRAMES * json.trials.length * json.config.WORLD_HEIGHT - 1
+    numFrames: NUM_SUBFRAMES * trials.length * config.WORLD_HEIGHT - 1
     speed: 8
     speedMultiplier: 2
     timestepFormatter: (timestep) -> "Trial #{getTrialNum()}"

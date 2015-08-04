@@ -213,7 +213,7 @@ update = ->
   # new circle elements we just created.
   circles
       .style 'fill', nodeColor
-      # Lighten node if it has no connections.
+      # Make node more transparent if it is off.
       .style 'fill-opacity', (node) ->
         if exports.CONFIG is 'EVOLUTION'
           return 1

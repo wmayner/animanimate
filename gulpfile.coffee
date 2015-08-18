@@ -7,17 +7,17 @@ SRC_DIR = './src'
 LIB_DIR = './lib'
 APP_DIR = './app'
 
-ENTRYPOINT = "#{LIB_DIR}/app.js"
-
 STYLUS_DIR = "#{SRC_DIR}/css"
-STYLUS = "#{STYLUS_DIR}/**/*.styl"
+STYLUS_FILES = "#{STYLUS_DIR}/**/*.styl"
 
 JADE_DIR = SRC_DIR
-JADE = "#{JADE_DIR}/**/*.jade"
+JADE_FILES = "#{JADE_DIR}/**/*.jade"
 
 COFFEE_DIR = "#{SRC_DIR}/js"
 COFFEE_FILES = "#{COFFEE_DIR}/**/*.coffee"
 COFFEE_CMD = './node_modules/coffee-script/bin/coffee'
+
+ENTRYPOINT = "#{LIB_DIR}/app.js"
 
 gulp.task 'clean:html', -> del "#{APP_DIR}/*.html"
 
@@ -25,7 +25,7 @@ gulp.task 'clean:js', -> del ["#{LIB_DIR}/*", "#{APP_DIR}/js/*.js"]
 
 gulp.task 'clean:css', -> del "#{APP_DIR}/css/*.css"
 
-gulp.task 'clean', ['clean-html', 'clean-js', 'clean-css']
+gulp.task 'clean', ['clean:html', 'clean:js', 'clean:css']
 
 gulp.task 'compile:jade', ['clean:html'], shell.task(
   "./node_modules/jade/bin/jade.js #{JADE_DIR} -o #{APP_DIR}"
@@ -47,10 +47,10 @@ gulp.task 'browserify', ['compile:coffee'], shell.task(
 gulp.task 'build', ['compile:jade', 'compile:stylus', 'browserify']
 
 gulp.task 'watch:jade', ['compile:jade'], ->
-  gulp.watch(JADE, ['compile:jade'])
+  gulp.watch(JADE_FILES, ['compile:jade'])
 
 gulp.task 'watch:stylus', ['compile:stylus'], ->
-  gulp.watch(STYLUS, ['compile:stylus'])
+  gulp.watch(STYLUS_FILES, ['compile:stylus'])
 
 gulp.task 'watch:coffee', ['browserify'], ->
   gulp.watch(COFFEE_FILES, ['browserify'])

@@ -9,9 +9,38 @@ environment = require './environment'
 
 NUM_SUBFRAMES = 3
 
+FF_NAMES =
+  mat: 'Matching (average 𝚽 weighted)'
+  bp: '𝚽'
+  sp: '∑ 𝛗'
+  sp_wvn: '∑ 𝛗 (world vs. noise)'
+  ex: 'Extrinsic cause information'
+  ex_wvn: 'Extrinsic cause information (world vs. noise)'
+  mi: 'Mutual information'
+  mi_wvn: 'Mutual information (world vs. noise)'
+
+gameInfoElt =
+titleElt =
+
+renderGameInfo = (json) ->
+  # Update title.
+  $('#title').text(FF_NAMES[json.config.FITNESS_FUNCTION])
+  $('#seed').text(json.config.SEED)
+  $('#generation').text(json.generation)
+  $('#correct-trials').text(json.correct)
+  $('#incorrect-trials').text(json.incorrect + json.correct)
+  $('#notes').text(json.notes)
+  $('#fitness').text(json.fitness.toFixed(4))
+
 exports.init = (network, json) ->
+  console.log json
+
+  # Display game configuration.
+  renderGameInfo(json)
+
   config = json.config
   trials = json.trials
+
   # Tell the environment the game parameters.
   environment.loadConfig(config)
 
@@ -34,6 +63,24 @@ exports.init = (network, json) ->
       else
         animat.resetNode(node)
     return
+
+  renderPhiData = (gameState) ->
+    d = gameState.phidata
+    $('#num-concepts').text(d.length)
+    # newText = (
+    #   "<div class='concept'>
+    #   <div class='concept-part'>𝛗: <strong>#{c.phi}</strong></div>
+    #   <div class='concept-part'>M: <strong>#{c.mechanism}</strong></div>
+    #   <div class='concept-part'>P: <strong>#{c.purview}</strong></div>
+    #   </div>" for c in d).join(' ')
+    newText = (
+      "<div class='concept'>
+      <div class='concept-part'>𝛗: <strong>#{c.phi}</strong></div>
+      <div class='concept-part'>M: <strong>#{c.mechanism}</strong></div>
+      <div class='concept-part'>CP: <strong>#{c.cause.purview}</strong></div>
+      <div class='concept-part'>EP: <strong>#{c.effect.purview}</strong></div>
+      </div>" for c in d).join(' ')
+    $('#concept-list').html(newText)
 
   # Animation functions.
   renderSensors = (frame) ->
@@ -62,6 +109,7 @@ exports.init = (network, json) ->
     internalTimestep = nextFrame % NUM_SUBFRAMES
     # Current game state.
     gameState = trial.timesteps[timestep]
+    renderPhiData(gameState)
     switch internalTimestep
       when 0
         # Update game state.

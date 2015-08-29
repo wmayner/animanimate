@@ -34,12 +34,27 @@ body
   .container
     .row.clearfix
       .col-md-12
-        h1.title Animat Evolution
-        ul.nav.nav-tabs
-          li(role="presentation")
-            a(href='/evolution.html') Evolution
-          li.active(role="presentation")
-            a(href='/game.html') Task Simulation
+        h1.title#title –
+        h2#notes –
+        hr
+        // ul.nav.nav-tabs
+        //   li(role="presentation")
+        //     a(href='/evolution.html') Evolution
+        //   li.active(role="presentation")
+        //     a(href='/game.html') Task Simulation
+    .row.clearfix
+      .col-md-12
+        .game-info
+          h2 Seed 
+            span#seed –
+          .game-info-item Value: 
+            strong#fitness –
+          .game-info-item Generation: 
+            strong#generation –
+          .game-info-item Correct trials: 
+            strong#correct-trials –
+            |  / 
+            strong#incorrect-trials
     .row.clearfix
       .col-lg-6
         #environment-module.module
@@ -69,6 +84,13 @@ body
                   input.slider.slider-horizontal(type='text')
                 button#play-pause.btn.btn-large.btn-primary
                   span.glyphicon.glyphicon-play
+    .row.clearfix
+      .col-md-12
+        .game-info
+          .game-info-item Concepts (
+            span#num-concepts –
+            | )
+          #concept-list –
 
   // Online/Offline
   // script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')

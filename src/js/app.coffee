@@ -25,8 +25,22 @@ $(document).ready ->
       evolutionAnimation.init(network, json.generations)
   else if network.CONFIG is 'GAME'
     console.log "Initializing game animation."
-    seed = 13
-    $.getJSON "data/compiled_results/0.0.15/nat/3-4-6-5/sensors-3/jumpstart-4/gen-60000/seed-#{seed}/game.json", (json) ->
+
+    measure = 'sp'
+    scrambled = no
+    seed = 6
+    ngen = 60000
+    snapshot = no
+    snapshot = '-1'
+
+    version = '0.0.20'
+    task = '3-4-6-5'
+    sensors = 3
+    jumpstart = 0
+
+    path = "data/compiled_results/#{version}/#{measure}/#{task}/sensors-#{sensors}/jumpstart-#{jumpstart}/ngen-#{ngen}/seed-#{seed}/#{if snapshot then 'snapshot-' + snapshot + '/' else ''}game#{if scrambled then '-scrambled' else ''}.json"
+    console.log "Loading game from path `#{path}`..."
+    $.getJSON path, (json) ->
       console.log "Loaded game with configuration:"
       console.log json.config
       nodeTypes =

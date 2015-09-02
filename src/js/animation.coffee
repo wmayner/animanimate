@@ -80,6 +80,12 @@ class Animation
       @render(@nextFrame)
 
     # Bind event handlers.
+    # Spacebar
+    $(document).keyup (e) ->
+      if e.keyCode == 32
+        handlePlayButton()
+        e.stopPropagation()
+    # Mouseclick
     togglePlaybackButton.mouseup handlePlayButton
     timestepSlider
       .on 'slide', handleTimestepSlider

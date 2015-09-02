@@ -19,8 +19,6 @@ FF_NAMES =
   mi: 'Mutual information'
   mi_wvn: 'Mutual information (world vs. noise)'
 
-gameInfoElt =
-titleElt =
 
 renderGameInfo = (json) ->
   # Update title.
@@ -52,8 +50,10 @@ exports.init = (network, json) ->
 
   getTrialNum = -> trialNum
 
+  # Generate animat graph.
+  animat = network.graphFromJson(json)
+
   # Initialize network.
-  animat = network.connectivityToGraph(json.cm, config)
   network.load(animat)
 
   selectiveSetState = (toSet, state) ->

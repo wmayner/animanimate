@@ -38,11 +38,32 @@ a
 .title, .game-info, #notes
   text-align center
 
-
 .game-info-item
   font-size 26px
   display inline-block
   margin 0 20px 0 20px
+
+.d3-tip
+  max-height 600px
+  overflow-y scroll
+  border-radius 5px
+  font-weight inherit
+  text-align center
+  vertical-align center
+  .mechanism-table
+    font-size 100%
+    margin 0
+    td
+      width 15pt
+      padding 3px
+  .mechanism-table .current-state
+    font-weight bold
+  .mechanism-table .on-row .mapping-arrow
+    color #0f6
+  .mechanism-table .off-row .mapping-arrow
+    color #f66
+.d3-tip.n::after
+  display none
 
 #concept-list
   .concept

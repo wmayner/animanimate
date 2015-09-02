@@ -84,6 +84,46 @@ nodeColor = (node) ->
   else
     return colors.node.other
 
+getMechanismTableHeader = (inputs, label) ->
+  return """
+      <thead>
+        <tr>
+          #{('<th>' + getLabel(i) + '</th>' for i in inputs[...-1]).join('')}
+          <th class='last-input'>#{getLabel(inputs[inputs.length - 1])}</th>
+          <th></th>
+          <th class="current-state">#{label}</th>
+        </tr>
+      </thead>
+  """
+
+getMechanismTableRows = (partial_tpm, classes = []) ->
+  return (
+    "<tr class='#{(c for c in classes).join(' ')}'>" +
+
+    # All inputs except the last
+    ('<td>' + i + '</td>' for i in row[0][...-1]).join('') +
+    # The last input
+    '<td class="last-input">' + row[0][row[0].length - 1] + '</td>' +
+    '<td class="mapping-arrow">→</td>' +
+    # The current state
+    '<td class="current-state' + '">' + row[1] + '</td>' +
+
+    '</tr>' for row in partial_tpm).join('')
+
+# Display a node's mechanism in a tooltip.
+tip = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html (d) ->
+    return 'No inputs' if d.mechanism.inputs.length is 0
+    return [
+      '<table class="table table-condensed mechanism-table">'
+      getMechanismTableHeader(d.mechanism.inputs, d.label)
+      '<tbody>'
+      getMechanismTableRows(d.mechanism.tpm[0], ['off-row'])
+      getMechanismTableRows(d.mechanism.tpm[1], ['on-row'])
+      '<tbody></table>'
+    ].join('')
 # =============================================================================
 
 # Declare the canvas.
@@ -120,6 +160,19 @@ svg
     .attr 'd', 'M10,-5L0,0L10,5'
     .attr 'fill', colors.link.endpoint
     .classed 'arrow-head', true
+
+
+# Activate the tooltip module.
+svg.call(tip)
+# Globals that keep track of which node the mechanism tooltip is on.
+mostRecentlyClickedNode = false
+tippedNode = null
+# Remove tooltips when clicking outside a node.
+svg.on 'mousedown', ->
+  tip.hide(tippedNode)
+  mostRecentlyClickedNode = false
+  tippedNode = null
+
 
 # Handles to link and node element groups.
 path = svg
@@ -191,11 +244,22 @@ update = ->
       .attr 'class', 'node'
       .attr 'r', NODE_RADIUS
       .on 'mouseover', (node) ->
-        # enlarge target node
+        # Enlarge target node
         d3.select(this).attr 'transform', 'scale(1.1)'
       .on 'mouseout', (node) ->
-        # unenlarge target node
+        # Unenlarge target node
         d3.select(this).attr 'transform', ''
+      .on 'mousedown', (node) ->
+        d3.event.stopPropagation()
+        mostRecentlyClickedNode = node
+        if mostRecentlyClickedNode is tippedNode
+          tip.hide(tippedNode)
+          tippedNode = null
+        else
+          tip.hide(tippedNode)
+          tip.show(mostRecentlyClickedNode)
+          tippedNode = node
+
   # Show node IDs.
   g.append 'svg:text'
       .attr 'x', 0
@@ -266,15 +330,17 @@ exports.load = (newGraph) ->
   graph = newGraph
   update()
 
-exports.connectivityToGraph = (cm, config) ->
-  positions = getPositions(config)
+
+exports.graphFromJson = (json) ->
+  positions = getPositions(json.config)
   graph = new Graph()
-  for i in [0...cm.length]
+  for i in [0...json.cm.length]
     node = graph.addNode(positions[i])
     node.label = getLabel(i)
-  for i in [0...cm.length]
-    for j in [0...cm[i].length]
-      if cm[i][j]
+    node.mechanism = json.mechanisms[i]
+  for i in [0...json.cm.length]
+    for j in [0...json.cm[i].length]
+      if json.cm[i][j]
         graph.addEdge(i, j)
   return graph
 

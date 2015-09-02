@@ -6,10 +6,10 @@
   "license": "GPLv3",
   "private": "true",
   "dependencies": {
-    "bootstrap": "~3.1.1",
-    "jquery": "1.10.2",
-    "d3": "3.x",
-    "c3": "~0.4.7",
-    "seiyria-bootstrap-slider": "~4.3.0"
+    "bootstrap": "3.x",
+    "c3": "~0.4.10",
+    "d3-tip": "0.6.6",
+    "d3": "3.4.x",
+    "seiyria-bootstrap-slider": "*"
   }
 }

@@ -26,9 +26,9 @@ $(document).ready ->
   else if network.CONFIG is 'GAME'
     console.log "Initializing game animation."
 
-    measure = 'sp'
+    measure = 'mat-from-scratch'
     scrambled = no
-    seed = 6
+    seed = 4
     ngen = 60000
     snapshot = no
     snapshot = '-1'

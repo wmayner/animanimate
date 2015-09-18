@@ -81,7 +81,7 @@ class Animation
 
     # Bind event handlers.
     # Spacebar
-    $(document).keyup (e) ->
+    $(document).keydown (e) ->
       if e.keyCode == 32
         handlePlayButton()
         e.stopPropagation()

@@ -3,6 +3,7 @@
 ###
 
 # Initialize interface components
+utils = require './utils'
 network = require './network'
 Animation = require './animation'
 environment = require './environment'
@@ -19,6 +20,8 @@ FF_NAMES =
   mi: 'Mutual information'
   mi_wvn: 'Mutual information (world vs. noise)'
 
+# Remember to set this once you have loaded the json data.
+exports.nodeTypes = undefined
 
 renderGameInfo = (json) ->
   # Update title.
@@ -64,23 +67,51 @@ exports.init = (network, json) ->
         animat.resetNode(node)
     return
 
+  getLabel = (index) -> utils.getLabel(index, exports.nodeTypes)
+
+  indicesToLabels = (indices) -> (getLabel(index) for index in indices).join(', ')
+
+  getConceptRow = (concept) ->
+    return """<tr>
+      <td class="mechanism">#{indicesToLabels(concept.mechanism)}</td>
+      <td>#{concept.phi}</td>
+      <td>#{indicesToLabels(concept.cause.mip.purview)}</td>
+      <td>#{concept.cause.mip.phi}</td>
+      <td>#{indicesToLabels(concept.effect.mip.purview)}</td>
+      <td>#{concept.effect.mip.phi}</td>
+    </tr>
+    """
+
+  getConceptTableBody = (constellation) ->
+    return """<tbody>
+    #{(getConceptRow(concept) for concept in constellation).join('')}
+    </tbody>"""
+
+  getConceptTable = (phidata) ->
+    return """
+    <table id='concept-table' class='table table-striped table-hover table-bordered'>
+      <thead>
+        <tr>
+          <td rowspan='2' class="large">Mechanism</td>
+          <td rowspan='2' class="large">𝛗</td>
+          <td colspan='2'>Cause</td>
+          <td colspan='2'>Effect</td>
+        <tr>
+          <td class="subheading">Purview</td>
+          <td class="subheading">𝛗<sub><em>cause</em></sub></td>
+          <td class="subheading">Purview</td>
+          <td class="subheading">𝛗<sub><em>effect</em></sub></td>
+      </thead>
+      <tbody>
+      #{getConceptTableBody(phidata.unpartitioned_constellation)}
+      <tbody>
+    </table>
+    """
+
   renderPhiData = (gameState) ->
     d = gameState.phidata
-    $('#num-concepts').text(d.length)
-    # newText = (
-    #   "<div class='concept'>
-    #   <div class='concept-part'>𝛗: <strong>#{c.phi}</strong></div>
-    #   <div class='concept-part'>M: <strong>#{c.mechanism}</strong></div>
-    #   <div class='concept-part'>P: <strong>#{c.purview}</strong></div>
-    #   </div>" for c in d).join(' ')
-    newText = (
-      "<div class='concept'>
-      <div class='concept-part'>𝛗: <strong>#{c.phi}</strong></div>
-      <div class='concept-part'>M: <strong>#{c.mechanism}</strong></div>
-      <div class='concept-part'>CP: <strong>#{c.cause.purview}</strong></div>
-      <div class='concept-part'>EP: <strong>#{c.effect.purview}</strong></div>
-      </div>" for c in d).join(' ')
-    $('#concept-list').html(newText)
+    $('#num-concepts').text(d.unpartitioned_constellation.length)
+    $('#concept-list').html(getConceptTable(d))
 
   # Animation functions.
   renderSensors = (frame) ->

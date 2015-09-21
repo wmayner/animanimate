@@ -48,6 +48,7 @@ $(document).ready ->
         'hidden': json.config.HIDDEN_INDICES
         'motors': json.config.MOTOR_INDICES
       network.nodeTypes = nodeTypes
+      gameAnimation.nodeTypes = nodeTypes
       gameAnimation.init(network, json)
   else if network.CONFIG is 'OPENEVOLUTION'
     console.log "Initializing open-evolution animation."

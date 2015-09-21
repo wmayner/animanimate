@@ -62,14 +62,7 @@ getPositions = (config) ->
 ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
-getLabel = (index) ->
-  if index in exports.nodeTypes.sensors
-    return 'S' + (index + 1)
-  if index in exports.nodeTypes.hidden
-    return ALPHABET[index - exports.nodeTypes.sensors.length]
-  if index in exports.nodeTypes.motors
-    return 'M' + (index - exports.nodeTypes.sensors.length -
-                  exports.nodeTypes.hidden.length + 1)
+getLabel = (index) -> utils.getLabel(index, exports.nodeTypes)
 
 # Color nodes based on role in the animat.
 nodeColor = (node) ->

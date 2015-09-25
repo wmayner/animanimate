@@ -10,14 +10,17 @@ Animation = require './animation'
 
 PHI_CHART_SELECTOR = '#phi-chart'
 FITNESS_CHART_SELECTOR = '#fitness-chart'
-
 NUM_CONCEPTS_CHART_SELECTOR = '#num-concepts-chart'
+NUM_EXCONCEPTS_CHART_SELECTOR = '#num-ex-concepts-chart'
+
 FITNESS_COLOR = colors.solarized.red.toString()
 PHI_COLOR = colors.solarized.blue.toString()
 NUM_CONCEPTS_COLOR = colors.solarized.cyan.toString()
+NUM_EXCONCEPTS_COLOR = colors.solarized.magenta.toString()
 
 PHI_RANGE = [0, 1.25]
 NUM_CONCEPTS_RANGE = [0, 6]
+NUM_EXCONCEPTS_RANGE = [0, 8]
 MAX_FITNESS = 128
 FITNESS_RANGE = [0, MAX_FITNESS]
 
@@ -51,6 +54,14 @@ exports.init = (network, positions, generations) ->
       min: NUM_CONCEPTS_RANGE[0]
       max: NUM_CONCEPTS_RANGE[1]
       xTickFormat: (x) -> d3.round(x * GENERATION_STEP, 0)
+    new Chart
+      name: 'Number of extr. Concepts'
+      bindto: NUM_EXCONCEPTS_CHART_SELECTOR
+      data: (d.numExConcepts for d in generations)
+      color: NUM_EXCONCEPTS_COLOR
+      min: NUM_EXCONCEPTS_RANGE[0]
+      max: NUM_EXCONCEPTS_RANGE[1]
+      xTickFormat: (x) -> d3.round(x * GENERATION_STEP, 0)  
   ]
 
   # Animation functions.

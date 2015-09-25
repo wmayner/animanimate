@@ -68,7 +68,7 @@ $(document).ready ->
   if network.CONFIG is 'EVOLUTION'
     console.log "Initializing evolution animation."
     #$.getJSON 'data/Animat15.json', (json) ->
-    $.getJSON 'data/c2a1_change_c23a14_evolution/Animat20_c2a1_change_c23a14.json', (json) ->
+    $.getJSON 'data/c2a1_change_c23a14_evolution/Animat179_c2a1_change_c23a14.json', (json) ->
       positions = getPositions(json.nodeTypes)
       network.nodeTypes = json.nodeTypes
       evolutionAnimation.init(network, positions, json.generations)

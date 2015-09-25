@@ -41,7 +41,7 @@ class Chart
             position: 'outer-center'
         y:
           tick:
-            count: 4
+            count: 5
             format: (x) -> d3.round(x, 2)
           padding:
             top: 0
@@ -54,7 +54,6 @@ class Chart
     config.axis.y.max = args.max
     if args.grid? then config.grid = args.grid
     if args.xTickFormat? then config.axis.x.tick.format = args.xTickFormat
-
     @_chart = c3.generate(config)
 
   _update: =>

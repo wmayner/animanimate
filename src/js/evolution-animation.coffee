@@ -17,9 +17,9 @@ PHI_COLOR = colors.solarized.blue.toString()
 NUM_CONCEPTS_COLOR = colors.solarized.cyan.toString()
 
 PHI_RANGE = [0, 1.25]
-NUM_CONCEPTS_RANGE = [0, 8]
-FITNESS_RANGE = [0, 1]
+NUM_CONCEPTS_RANGE = [0, 6]
 MAX_FITNESS = 128
+FITNESS_RANGE = [0, MAX_FITNESS]
 
 GENERATION_STEP = 512
 
@@ -34,7 +34,6 @@ exports.init = (network, positions, generations) ->
       color: FITNESS_COLOR
       min: FITNESS_RANGE[0]
       max: FITNESS_RANGE[1]
-      dataTransform: (fitness) -> fitness / MAX_FITNESS
       xTickFormat: (x) -> d3.round(x * GENERATION_STEP, 0)
     new Chart
       name: 'Phi'

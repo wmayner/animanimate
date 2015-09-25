@@ -39,8 +39,9 @@ getPositions = (nodeTypes) ->
     # Make 2 rows if there are more than 2 hidden nodes.
     if nodeTypes.hidden.length > 2
       numHidden = nodeTypes.hidden.length
+      numSensors = nodeTypes.sensors.length
       # If numHidden does not divide by 2, put less nodes in upper row.
-      if ((i % numHidden) + 1) < ((numHidden+1) / 2)
+      if (((i - numSensors) % numHidden) + 1) < ((numHidden+1) / 2)
         numNodesInRow = Math.floor(numHidden / 2)
         if (numHidden % 2) > 0 then positions[i].y = 250 else positions[i].y = 225
       else
@@ -66,7 +67,8 @@ $(document).ready ->
 
   if network.CONFIG is 'EVOLUTION'
     console.log "Initializing evolution animation."
-    $.getJSON 'data/Animat15.json', (json) ->
+    #$.getJSON 'data/Animat15.json', (json) ->
+    $.getJSON 'data/c2a1_change_c23a14_evolution/Animat20_c2a1_change_c23a14.json', (json) ->
       positions = getPositions(json.nodeTypes)
       network.nodeTypes = json.nodeTypes
       evolutionAnimation.init(network, positions, json.generations)

@@ -236,9 +236,7 @@ exports.connectivityToGraph = (cm, positions) ->
   for i in [0...cm.length]
     for j in [0...cm[i].length]
       if cm[i][j]
-        # In the Matlab code, connectivity matrices use the j --> i
-        # convention.
-        graph.addEdge(j, i)
+        graph.addEdge(i, j)
   return graph
 
 

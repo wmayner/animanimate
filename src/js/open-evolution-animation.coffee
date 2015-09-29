@@ -17,12 +17,13 @@ GENERATION_STEP = 512
 
 exports.init = (network, positions, json) ->
 
-  $('#chart-module').append (
-    "<h2 class='module-title'>" + json.dataLabels[0][i] + '</h2>' +
-    "<div class='chart-container'>" +
-      "<div class='chart module-canvas' id='chart-" + dataProperty + "'></div>" +
-    "</div>" for dataProperty, i in json.dataProperties[0]
-  )
+  for i in [0..1]
+    $('#chart-module'+(i+1).toString() ).append (
+      "<h2 class='module-title'>" + json.dataLabels[0][j+3*i] + '</h2>' +
+      "<div class='chart-container'>" +
+        "<div class='chart module-canvas' id='chart-" + dataProperty + "'></div>" +
+      "</div>" for dataProperty, j in json.dataProperties[0][(3*i)..(3*(i+1)-1)]
+    )
   
   charts = (
     new Chart(
@@ -46,6 +47,8 @@ exports.init = (network, positions, json) ->
     for chart in charts
       chart.load(nextFrame)
     return
+
+    
 
   reset = ->
     for chart in charts

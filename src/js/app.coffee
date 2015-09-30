@@ -106,12 +106,14 @@ $(document).ready ->
       '<li><a href=?file='+name+'>'+name+'</a></li>' for name in files
     )
    
-
     queryDict = {}
     location.search.substr(1).split("&").forEach( (item) -> queryDict[item.split("=")[0]] = item.split("=")[1] )
     current_file = base_dest + '/' + queryDict['file']
-    
     $('#current-file').append(queryDict['file'])
+
+    index_of_file = files.indexOf(queryDict['file'])
+    $('#go-left').attr('href', '?file=' + files[if index_of_file >1 then index_of_file - 1 else index_of_file])
+    $('#go-right').attr('href', '?file=' + files[if index_of_file < files.length-1 then index_of_file + 1 else index_of_file])
     
     $.getJSON current_file, (json) ->
       positions = getPositions(json.nodeTypes)

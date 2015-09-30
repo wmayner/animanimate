@@ -52,11 +52,16 @@ body
                   input.slider.slider-horizontal(type='text')
             .col-md-6
               div.well
-                div.dropdown
-                  button.btn.btn-primary.dropdown-toggle(type='button', data-toggle='dropdown') Json Files
-                    span.caret
-                  ul#json-list.dropdown-menu
-                h5#current-file
+                h4#current-file
+                div.row.clearfix
+                  div.col-md-3
+                  a.btn.btn-primary.glyphicon.glyphicon-chevron-left.col-md-1#go-left
+                  div.dropdown.col-md-4
+                    button.btn.btn-primary.dropdown-toggle(type='button', data-toggle='dropdown') Json Files
+                      span.caret
+                    ul#json-list.dropdown-menu
+                  a.btn.btn-primary.glyphicon.glyphicon-chevron-right.col-md-1#go-right
+               
                     
               
         #timestep Generation 0

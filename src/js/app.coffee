@@ -102,8 +102,11 @@ $(document).ready ->
 
     base_dest = 'data/c2a1_change_c23a14_evolution'
 
+    document.click_list = (location) ->
+      document.location.href = '?file=' + location + '&gen=' + (animation.nextFrame-1)
+
     $('#json-list').append(
-      '<li><a href=?file='+name+'>'+name+'</a></li>' for name in files
+      '<li><a onclick=click_list("' + name + '")>' + name + '</a></li>' for name in files
     )
    
     queryDict = {}

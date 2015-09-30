@@ -39,7 +39,7 @@ body
 
         .animation-controls
           .row.clearfix
-            .col-md-12
+            .col-md-6
               .control-group
                 span.control-label Speed:
                 #speed-slider-container
@@ -50,6 +50,20 @@ body
                 span.control-label Generation:
                 #timestep-slider-container
                   input.slider.slider-horizontal(type='text')
+            .col-md-6
+              div.well
+                h4#current-file
+                div.row.clearfix
+                  div.col-md-3
+                  a.btn.btn-primary.glyphicon.glyphicon-chevron-left.col-md-1#go-left
+                  div.dropdown.col-md-4
+                    button.btn.btn-primary.dropdown-toggle(type='button', data-toggle='dropdown') Json Files
+                      span.caret
+                    ul#json-list.dropdown-menu
+                  a.btn.btn-primary.glyphicon.glyphicon-chevron-right.col-md-1#go-right
+               
+                    
+              
         #timestep Generation 0
     .row.clearfix
     
@@ -67,6 +81,11 @@ body
       .col-lg-3
         #chart-module2.module
 
+
+        
+            
+            
+          
               
   // Online/Offline
   // script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')

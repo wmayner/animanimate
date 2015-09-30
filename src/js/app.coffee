@@ -80,7 +80,45 @@ $(document).ready ->
       gameAnimation.init(network, positions, json)
   else if network.CONFIG is 'OPENEVOLUTION'
     console.log "Initializing open-evolution animation."
-    $.getJSON 'data/c2a1_change_c23a14_evolution/Animat179_c2a1_change_c23a14.json', (json) ->
+    
+    files = [
+             'Animat20_c2a1_change_c23a14.json',
+             'Animat26_c2a1_change_c23a14.json',
+             'Animat27_c2a1_change_c23a14.json',
+             'Animat38_c2a1_change_c23a14.json',
+             'Animat64_c2a1_change_c23a14.json',
+             'Animat65_c2a1_change_c23a14.json',
+             'Animat78_c2a1_change_c23a14.json',
+             'Animat80_c2a1_change_c23a14.json',
+             'Animat129_c2a1_change_c23a14.json',
+             'Animat132_c2a1_change_c23a14.json',
+             'Animat148_c2a1_change_c23a14.json',
+             'Animat167_c2a1_change_c23a14.json',
+             'Animat174_c2a1_change_c23a14.json',
+             'Animat179_c2a1_change_c23a14.json',
+             'Animat185_c2a1_change_c23a14.json',
+             'Animat196_c2a1_change_c23a14.json',
+            ]
+
+    base_dest = 'data/c2a1_change_c23a14_evolution'
+
+    $('#json-list').append(
+      '<li><a href=?file='+name+'>'+name+'</a></li>' for name in files
+    )
+   
+    queryDict = {}
+    location.search.substr(1).split("&").forEach( (item) -> queryDict[item.split("=")[0]] = item.split("=")[1] )
+    current_file = base_dest + '/' + queryDict['file']
+    $('#current-file').append(queryDict['file'])
+
+    index_of_file = files.indexOf(queryDict['file'])
+    $('#go-left').attr('href', '?file=' + files[if index_of_file >1 then index_of_file - 1 else index_of_file])
+    $('#go-right').attr('href', '?file=' + files[if index_of_file < files.length-1 then index_of_file + 1 else index_of_file])
+    
+    $.getJSON current_file, (json) ->
       positions = getPositions(json.nodeTypes)
       network.nodeTypes = json.nodeTypes
       openEvolutionAnimation.init(network, positions, json)
+
+
+

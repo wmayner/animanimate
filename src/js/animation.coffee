@@ -42,8 +42,7 @@ class Animation
     @timestepFormatter = config.timestepFormatter
     @speed = config.speed or 8
     @speedMultiplier = config.speedMultiplier or 1
-
-    @nextFrame = 0
+    @nextFrame = config.startFrame or 0 # this is the frame the slider starts at
     @timeout = 0
     @running = false
     @finished = false

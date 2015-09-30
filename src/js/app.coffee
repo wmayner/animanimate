@@ -112,13 +112,19 @@ $(document).ready ->
     $('#current-file').append(queryDict['file'])
 
     index_of_file = files.indexOf(queryDict['file'])
-    $('#go-left').attr('href', '?file=' + files[if index_of_file >1 then index_of_file - 1 else index_of_file])
-    $('#go-right').attr('href', '?file=' + files[if index_of_file < files.length-1 then index_of_file + 1 else index_of_file])
-    
-    $.getJSON current_file, (json) ->
+    nextFrame = parseInt(queryDict['gen'])
+            
+    $('#go-left').click( ->
+      document.location.href = '?file=' + files[if index_of_file >1 then index_of_file - 1 else index_of_file] + '&gen=' + (animation.nextFrame-1)
+      )
+                                    
+    $('#go-right').click( ->
+      document.location.href = '?file=' + files[if index_of_file < files.length-1 then index_of_file + 1 else index_of_file] + '&gen=' + (animation.nextFrame-1)
+      )
+
+      
+    animation = $.getJSON current_file, (json) ->
       positions = getPositions(json.nodeTypes)
       network.nodeTypes = json.nodeTypes
-      openEvolutionAnimation.init(network, positions, json)
-
-
-
+      animation = openEvolutionAnimation.init(network, positions, json, nextFrame)
+      animation

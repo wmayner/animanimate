@@ -92,7 +92,7 @@ $(document).ready ->
       console.log conditions
       
       candidate_files = []
-      candidate_files.push('data/' + queryDict['condition'] + "_evolution/Animat" + n + "_" + queryDict['condition'] + ".json") for n in [1..400]
+      candidate_files.push('data/' + queryDict['condition'] + "_evolution/Animat" + n + "_" + queryDict['condition'] + ".json") for n in [0..400]
 
       # loop through all possible file names to see if they exist
       ((cf) ->

@@ -133,7 +133,7 @@ $(document).ready ->
       nextFrame = parseInt(queryDict['gen'])
               
       $('#go-left').click( ->
-        document.location.href = '?file=' + files[if index_of_file >1 then index_of_file - 1 else index_of_file] +
+        document.location.href = '?file=' + files[if index_of_file >0  then index_of_file - 1 else index_of_file] +
                                '&gen=' + (animation.nextFrame-1) +
                                '&condition=' + queryDict['condition']
         )

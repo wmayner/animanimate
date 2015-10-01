@@ -15,9 +15,9 @@ PLOT_COLOR = [
 
 GENERATION_STEP = 512
 
-exports.init = (network, positions, json) ->
+exports.init = (network, positions, json, startFrame) ->
 
-  for i in [0..1]
+  for i in [0..1]#for placing 3 charts on either side of the network
     $('#chart-module'+(i+1).toString() ).append (
       "<h2 class='module-title'>" + json.dataLabels[0][j+3*i] + '</h2>' +
       "<div class='chart-container'>" +
@@ -27,7 +27,7 @@ exports.init = (network, positions, json) ->
   
   charts = (
     new Chart(
-      name: json.dataLabels[i]
+      name: "undefined"#json.dataLabels[i]# by making the hover label undefined, it allows me to simply thicken the line
       bindto: $('#chart-' + dataProperty)[0]
       data: (d[dataProperty] for d in json.generations)
       color: PLOT_COLOR[i]
@@ -37,7 +37,7 @@ exports.init = (network, positions, json) ->
     ) for dataProperty, i in json.dataProperties[0]
   )
 
-  console.log charts
+  #console.log charts
 
   # Animation functions.
   render = (nextFrame) ->
@@ -65,5 +65,10 @@ exports.init = (network, positions, json) ->
     timestepFormatter: (timestep) ->
       "Generation #{timestep * GENERATION_STEP}"
     timestepSliderStep: 1
+    startFrame: startFrame
 
-  animation.play()
+  #animation.play()
+  animation.tick()
+
+  #console.log 'here ' + animation.nextFrame
+  animation

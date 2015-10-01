@@ -80,54 +80,75 @@ $(document).ready ->
       gameAnimation.init(network, positions, json)
   else if network.CONFIG is 'OPENEVOLUTION'
     console.log "Initializing open-evolution animation."
-    
-    files = [
-             'Animat20_c2a1_change_c23a14.json',
-             'Animat26_c2a1_change_c23a14.json',
-             'Animat27_c2a1_change_c23a14.json',
-             'Animat38_c2a1_change_c23a14.json',
-             'Animat64_c2a1_change_c23a14.json',
-             'Animat65_c2a1_change_c23a14.json',
-             'Animat78_c2a1_change_c23a14.json',
-             'Animat80_c2a1_change_c23a14.json',
-             'Animat129_c2a1_change_c23a14.json',
-             'Animat132_c2a1_change_c23a14.json',
-             'Animat148_c2a1_change_c23a14.json',
-             'Animat167_c2a1_change_c23a14.json',
-             'Animat174_c2a1_change_c23a14.json',
-             'Animat179_c2a1_change_c23a14.json',
-             'Animat185_c2a1_change_c23a14.json',
-             'Animat196_c2a1_change_c23a14.json',
-            ]
 
-    base_dest = 'data/c2a1_change_c23a14_evolution'
-
-    document.click_list = (location) ->
-      document.location.href = '?file=' + location + '&gen=' + (animation.nextFrame-1)
-
-    $('#json-list').append(
-      '<li><a onclick=click_list("' + name + '")>' + name + '</a></li>' for name in files
-    )
-   
     queryDict = {}
     location.search.substr(1).split("&").forEach( (item) -> queryDict[item.split("=")[0]] = item.split("=")[1] )
-    current_file = base_dest + '/' + queryDict['file']
-    $('#current-file').append(queryDict['file'])
 
-    index_of_file = files.indexOf(queryDict['file'])
-    nextFrame = parseInt(queryDict['gen'])
-            
-    $('#go-left').click( ->
-      document.location.href = '?file=' + files[if index_of_file >1 then index_of_file - 1 else index_of_file] + '&gen=' + (animation.nextFrame-1)
-      )
-                                    
-    $('#go-right').click( ->
-      document.location.href = '?file=' + files[if index_of_file < files.length-1 then index_of_file + 1 else index_of_file] + '&gen=' + (animation.nextFrame-1)
-      )
-
+    conditions = []
+    files = []
+    
+    jQuery.get('data/conditions.txt', (data) ->
+      conditions.push(d) for d in data.split('\n')
+      console.log conditions
       
-    animation = $.getJSON current_file, (json) ->
-      positions = getPositions(json.nodeTypes)
-      network.nodeTypes = json.nodeTypes
-      animation = openEvolutionAnimation.init(network, positions, json, nextFrame)
-      animation
+      candidate_files = []
+      candidate_files.push('data/' + queryDict['condition'] + "_evolution/Animat" + n + "_" + queryDict['condition'] + ".json") for n in [1..400]
+
+      # loop through all possible file names to see if they exist
+      ((cf) ->
+        jQuery.get(cf)
+          .done( ->
+            files.push(cf))
+          .fail(->))(cf) for cf in candidate_files
+
+    )
+
+
+
+    animation = 'waiting for an ajax call to set me, but i want to return anyways, and I dont know how else to declare vars in coffee'
+    $(document).ajaxStop(->
+      #reset it so it doesn't keep going forever  
+      $(this).unbind("ajaxStop");
+
+      base_dest = 'data/c2a1_change_c23a14_evolution'
+
+      document.click_list = (location) ->
+        document.location.href = '?file=' + location + '&gen=' + (animation.nextFrame-1) + '&condition=' + queryDict['condition']
+
+      document.click_condition = (condition) ->
+        document.location.href = '?condition=' + condition + '&gen=' + (animation.nextFrame-1)
+
+      $('#json-list').append(
+        '<li><a onclick=click_list("' + name + '")>' + name.match(/(A[a-zA-Z0-9_]+)/gm) + '</a></li>' for name in files
+      )
+      $('#condition-list').append(
+        '<li><a onclick=click_condition("' + name + '")>' + name + '</a></li>' for name in conditions
+      )
+   
+      
+      current_file = queryDict['file']
+      $('#current-file').append(queryDict['file'].match(/(A[a-zA-Z0-9_]+)/gm))
+  
+      index_of_file = files.indexOf(queryDict['file'])
+      nextFrame = parseInt(queryDict['gen'])
+              
+      $('#go-left').click( ->
+        document.location.href = '?file=' + files[if index_of_file >1 then index_of_file - 1 else index_of_file] +
+                               '&gen=' + (animation.nextFrame-1) +
+                               '&condition=' + queryDict['condition']
+        )
+                                      
+      $('#go-right').click( ->
+        document.location.href = '?file=' + files[if index_of_file < files.length-1 then index_of_file + 1 else index_of_file] +
+                               '&gen=' + (animation.nextFrame-1) +
+                               '&condition=' + queryDict['condition']
+        )
+  
+        
+      animation = $.getJSON current_file, (json) ->
+        positions = getPositions(json.nodeTypes)
+        network.nodeTypes = json.nodeTypes
+        animation = openEvolutionAnimation.init(network, positions, json, nextFrame)
+        animation
+      )
+    animation

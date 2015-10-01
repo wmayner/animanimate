@@ -37,7 +37,7 @@ exports.init = (network, positions, json, startFrame) ->
     ) for dataProperty, i in json.dataProperties[0]
   )
 
-  console.log charts
+  #console.log charts
 
   # Animation functions.
   render = (nextFrame) ->

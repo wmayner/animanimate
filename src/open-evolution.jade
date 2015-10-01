@@ -54,9 +54,13 @@ body
               div.well
                 h4#current-file
                 div.row.clearfix
-                  div.col-md-3
+                  div.col-md-2
                   a.btn.btn-primary.glyphicon.glyphicon-chevron-left.col-md-1#go-left
-                  div.dropdown.col-md-4
+                  div.dropdown.col-md-3
+                    button.btn.btn-primary.dropdown-toggle(type='button', data-toggle='dropdown') Conditions
+                      span.caret
+                    ul#condition-list.dropdown-menu
+                  div.dropdown.col-md-3
                     button.btn.btn-primary.dropdown-toggle(type='button', data-toggle='dropdown') Json Files
                       span.caret
                     ul#json-list.dropdown-menu

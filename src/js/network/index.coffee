@@ -29,7 +29,7 @@ getLabel = (index) ->
   if index in exports.nodeTypes.sensors
     return 'S' + ((index % exports.nodeTypes.sensors.length) + 1)
   if index in exports.nodeTypes.hidden
-    return ALPHABET[index % exports.nodeTypes.hidden.length]
+    return ALPHABET[(index - exports.nodeTypes.sensors.length) % exports.nodeTypes.hidden.length]
   if index in exports.nodeTypes.motors
     return 'M' + ((index % exports.nodeTypes.motors.length) + 1)
 

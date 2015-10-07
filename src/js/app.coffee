@@ -110,13 +110,13 @@ $(document).ready ->
       #reset it so it doesn't keep going forever  
       $(this).unbind("ajaxStop");
 
-      base_dest = 'data/c2a1_change_c23a14_evolution'
+      base_dest = 'data/c2a1_change_c23a14_evolution' 
 
       document.click_list = (location) ->
-        document.location.href = '?file=' + location + '&gen=' + (animation.nextFrame-1) + '&condition=' + queryDict['condition']
-
+        document.location.href = '?file=' + location + '&gen=' + (if animation.nextFrame? then animation.nextFrame - 1 else 0) + '&condition=' + queryDict['condition']
+        
       document.click_condition = (condition) ->
-        document.location.href = '?condition=' + condition + '&gen=' + (animation.nextFrame-1)
+        document.location.href = '?condition=' + condition + '&gen=' + (if animation.nextFrame? then animation.nextFrame - 1 else 0)
 
       $('#json-list').append(
         '<li><a onclick=click_list("' + name + '")>' + name.match(/(A[a-zA-Z0-9_]+)/gm) + '</a></li>' for name in files

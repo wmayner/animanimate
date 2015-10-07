@@ -10,6 +10,7 @@ module.exports =
     sensor: d3.rgb 122, 228, 122
     hidden: d3.rgb 236, 233, 54
     motor: d3.rgb 220, 80, 80
+    causally_ineffective: d3.rgb 250, 250, 196
     other: solarized.base1
     label: d3.rgb 68, 68, 68
   link:

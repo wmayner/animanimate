@@ -65,9 +65,9 @@ exports.init = (network, positions, json, startFrame) ->
     timestepFormatter: (timestep) ->
       "Generation #{timestep * GENERATION_STEP}"
     timestepSliderStep: 1
-    startFrame: startFrame
+    #startFrame: startFrame
 
-  #animation.play()
+  animation.setNextFrame(startFrame)
   animation.tick()
 
   #console.log 'here ' + animation.nextFrame

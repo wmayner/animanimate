@@ -37,14 +37,23 @@ getLabel = (index) ->
 nodeColor = (node) ->
   if graph.getAllEdgesOf(node._id).length is 0
     return colors.node.other
+
   if node.index in exports.nodeTypes.sensors
     return colors.node.sensor
-  else if node.index in exports.nodeTypes.hidden
-    return colors.node.hidden
-  else if node.index in exports.nodeTypes.motors
+
+  if node.index in exports.nodeTypes.motors
     return colors.node.motor
-  else
-    return colors.node.other
+  console.log graph.getOutEdgesOf(node._id).length 
+  if graph.getInEdgesOf(node._id).length  - Number(node.reflexive) is 0
+    return colors.node.causally_ineffective
+    
+  if graph.getOutEdgesOf(node._id).length - Number(node.reflexive)  is 0
+    return colors.node.causally_ineffective
+
+  if node.index in exports.nodeTypes.hidden
+    return colors.node.hidden
+    
+  return colors.node.other
 
 # =====================================================================
 
@@ -233,10 +242,12 @@ exports.connectivityToGraph = (cm, positions) ->
   for i in [0...cm.length]
     node = graph.addNode(positions[i])
     node.label = getLabel(node.index)
+    
   for i in [0...cm.length]
     for j in [0...cm[i].length]
-      if cm[i][j]
+      if cm[i][j] # if there's a connection from i to j
         graph.addEdge(i, j)
+        
   return graph
 
 

@@ -37,14 +37,23 @@ getLabel = (index) ->
 nodeColor = (node) ->
   if graph.getAllEdgesOf(node._id).length is 0
     return colors.node.other
+
   if node.index in exports.nodeTypes.sensors
     return colors.node.sensor
-  else if node.index in exports.nodeTypes.hidden
-    return colors.node.hidden
-  else if node.index in exports.nodeTypes.motors
+
+  if node.index in exports.nodeTypes.motors
     return colors.node.motor
-  else
-    return colors.node.other
+  console.log graph.getOutEdgesOf(node._id).length 
+  if graph.getInEdgesOf(node._id).length  - Number(node.reflexive) is 0
+    return colors.node.causally_ineffective
+    
+  if graph.getOutEdgesOf(node._id).length - Number(node.reflexive)  is 0
+    return colors.node.causally_ineffective
+
+  if node.index in exports.nodeTypes.hidden
+    return colors.node.hidden
+    
+  return colors.node.other
 
 # =====================================================================
 
@@ -236,28 +245,9 @@ exports.connectivityToGraph = (cm, positions) ->
     
   for i in [0...cm.length]
     for j in [0...cm[i].length]
-
-      # for removing nodes with only inputs or only outputs
-      row_minus_self = cm[i].reduce((a, b) -> a + b) - cm[i][i]
-      column = []
-      for i2 in [0...cm.length]
-        column.push(cm[i2][i])
-      col_minus_self = column.reduce((a, b) -> a + b) - cm[i][i]
-
       if cm[i][j] # if there's a connection from i to j
-        if i==0 or i==1 or i==cm.length-1 or i==cm.length-2 #show all sensor/motor edges
-          graph.addEdge(i, j)
-        if row_minus_self > 0 and col_minus_self > 0 # remove all hidden node edges with only in/out
-          graph.addEdge(i, j)
-
-  # remove edges from sensors to nodes that don't also output
-  for i in [0..1]
-    for j in [2..5]
-      out_sum = cm[j].reduce((a, b) -> a + b) - cm[j][j]
-      if out_sum==0 and cm[i][j]==1
-        graph.removeEdge(i, j)
+        graph.addEdge(i, j)
         
-
   return graph
 
 

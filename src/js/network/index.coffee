@@ -29,7 +29,7 @@ getLabel = (index) ->
   if index in exports.nodeTypes.sensors
     return 'S' + ((index % exports.nodeTypes.sensors.length) + 1)
   if index in exports.nodeTypes.hidden
-    return ALPHABET[index % exports.nodeTypes.hidden.length]
+    return ALPHABET[(index - exports.nodeTypes.sensors.length) % exports.nodeTypes.hidden.length]#ALPHABET[index % exports.nodeTypes.hidden.length]
   if index in exports.nodeTypes.motors
     return 'M' + ((index % exports.nodeTypes.motors.length) + 1)
 
@@ -43,7 +43,7 @@ nodeColor = (node) ->
 
   if node.index in exports.nodeTypes.motors
     return colors.node.motor
-  console.log graph.getOutEdgesOf(node._id).length 
+
   if graph.getInEdgesOf(node._id).length  - Number(node.reflexive) is 0
     return colors.node.causally_ineffective
     

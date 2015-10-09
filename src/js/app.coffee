@@ -86,41 +86,25 @@ $(document).ready ->
 
     conditions = []
     files = []
-    
-    jQuery.get('data/conditions.txt', (data) ->
-      conditions.push(d) for d in data.split('\n')
-      console.log conditions
+    files_set = []
+    animation = ''
+
+
+
+    load_up = ->
+      # call this when you're ready to load the UI
       
-      candidate_files = []
-      candidate_files.push('data/' + queryDict['condition'] + "_evolution/Animat" + n + "_" + queryDict['condition'] + ".json") for n in [0..400]
-
-      # loop through all possible file names to see if they exist
-      ((cf) ->
-        jQuery.get(cf)
-          .done( ->
-            files.push(cf))
-          .fail(->))(cf) for cf in candidate_files
-
-    )
-
-
-
-    animation = 'waiting for an ajax call to set me, but i want to return anyways, and I dont know how else to declare vars in coffee'
-    $(document).ajaxStop(->
-      #reset it so it doesn't keep going forever  
-      $(this).unbind("ajaxStop");
-
-      base_dest = 'data/c2a1_change_c23a14_evolution' 
-
       document.click_list = (location) ->
-        document.location.href = '?file=' + location + '&gen=' + (if animation.nextFrame? then animation.nextFrame - 1 else 0) + '&condition=' + queryDict['condition']
+        document.location.href = '?file=' + location + '&gen=' + (if animation.nextFrame? then animation.nextFrame - 1 else 0) + '&condition=' + queryDict['condition'] + '&files_set=' + files_set.toString()
         
       document.click_condition = (condition) ->
-        document.location.href = '?condition=' + condition + '&gen=' + (if animation.nextFrame? then animation.nextFrame - 1 else 0)
+        document.location.href = '?condition=' + condition + '&gen=' + (if animation.nextFrame? then animation.nextFrame - 1 else 0) #+ '&files_set=' + files_set.toString()
 
       $('#json-list').append(
         '<li><a onclick=click_list("' + name + '")>' + name.match(/(A[a-zA-Z0-9_]+)/gm) + '</a></li>' for name in files
       )
+
+      #console.log conditions
       $('#condition-list').append(
         '<li><a onclick=click_condition("' + name + '")>' + name + '</a></li>' for name in conditions
       )
@@ -135,13 +119,15 @@ $(document).ready ->
       $('#go-left').click( ->
         document.location.href = '?file=' + files[if index_of_file >0  then index_of_file - 1 else index_of_file] +
                                '&gen=' + (animation.nextFrame-1) +
-                               '&condition=' + queryDict['condition']
+                               '&condition=' + queryDict['condition'] +
+                               '&files_set=' + files_set.toString()
         )
                                       
       $('#go-right').click( ->
         document.location.href = '?file=' + files[if index_of_file < files.length-1 then index_of_file + 1 else index_of_file] +
                                '&gen=' + (animation.nextFrame-1) +
-                               '&condition=' + queryDict['condition']
+                               '&condition=' + queryDict['condition'] +
+                               '&files_set=' + files_set.toString()
         )
   
         
@@ -150,5 +136,41 @@ $(document).ready ->
         network.nodeTypes = json.nodeTypes
         animation = openEvolutionAnimation.init(network, positions, json, nextFrame)
         animation
+
+
+    if queryDict.files_set?
+      files_set = JSON.parse('[' + queryDict['files_set'] + ']')
+      for num in files_set
+          files.push('data/' + queryDict['condition'] + "_evolution/Animat" + num + "_" + queryDict['condition'] + ".json")
+  
+    jQuery.get('data/conditions.txt', (data) ->
+      conditions.push(d) for d in data.split('\n')
+      # console.log conditions
+      
+      
+      if 'condition' of queryDict
+        candidate_files = []
+        candidate_files.push('data/' + queryDict['condition'] + "_evolution/Animat" + n + "_" + queryDict['condition'] + ".json") for n in [0..400]
+      
+        # loop through all possible file names to see if they exist
+        if files.length is 0
+          ((cf, i) ->
+            jQuery.get(cf)
+              .done( ->
+                files.push(cf)
+                files_set.push(i)
+                )
+              .fail(->))(candidate_files[i], i) for i in [0..400]
+    
+    )
+    
+    $(document).ajaxStop(->
+      #reset it so it doesn't keep going forever  
+      $(this).unbind("ajaxStop");
+      load_up()
+
       )
+
+
+    
     animation

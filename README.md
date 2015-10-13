@@ -28,3 +28,7 @@ Install the dependencies, build the app, and start local server:
     npm start
 
 Now the page will be available at [http://localhost:5000](http://localhost:5000).
+
+While developing, run `gulp dev` to automatically recompile files:
+
+    gulp dev

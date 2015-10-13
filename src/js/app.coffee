@@ -159,6 +159,14 @@ $(document).ready ->
               .done( ->
                 files.push(cf)
                 files_set.push(i)
+                sorter = (a, b) ->
+                  a = Number(a.match(/Animat([0-9]+)/)[1])
+                  b = Number(b.match(/Animat([0-9]+)/)[1])
+                  console.log(a + '/' + b)
+                  if a? and b? and a < b then -1 else 1
+                files.sort(sorter)
+                files_set.sort( (a, b) ->
+                    if Number(a) < Number(b) then -1 else 1 )
                 )
               .fail(->))(candidate_files[i], i) for i in [0..400]
     

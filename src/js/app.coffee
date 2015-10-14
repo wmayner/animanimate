@@ -140,6 +140,7 @@ $(document).ready ->
 
     if queryDict.files_set?
       files_set = JSON.parse('[' + queryDict['files_set'] + ']')
+      files_set.sort((a, b) -> if Number(a) < Number(b) then -1 else 1 )
       for num in files_set
           files.push('data/' + queryDict['condition'] + "_evolution/Animat" + num + "_" + queryDict['condition'] + ".json")
   

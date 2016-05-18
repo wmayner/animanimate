@@ -1,11 +1,11 @@
 // app.styl
 
-@import url('http://fonts.googleapis.com/css?family=Droid+Sans+Mono|Open+Sans:300,400,700')
+@import url('http://fonts.googleapis.com/css?family=Roboto:300,400,400italic,700|Roboto+Mono')
 
 @import "colors"
 
-base_font = 'Open Sans', 'Helvetica Neue', 'Helvetica'
-mono_font = 'Droid Sans Mono', 'Monaco', 'Menlo', 'Courier New', monospace
+base_font = 'Roboto', 'Open Sans', 'Noto Sans', 'Helvetica Neue', 'Helvetica'
+mono_font = 'Roboto Mono', 'Monaco', 'Menlo', 'Courier New', monospace
 
 
 body
@@ -32,9 +32,55 @@ a
   // Inline-block space fix.
   margin-right -4px
 
-.title
-  text-align center
+.title, .game-info
   margin-bottom 20px
+
+.title, .game-info, #notes
+  text-align center
+
+.game-info-item
+  font-size 26px
+  display inline-block
+  margin 0 20px 0 20px
+
+.d3-tip
+  padding 10px
+  background-color rgba(0, 0, 0, 0.8)
+  color white
+  max-height 600px
+  overflow-y scroll
+  border-radius 5px
+  font-weight inherit
+  text-align center
+  vertical-align center
+  .mechanism-table
+    font-size 100%
+    margin 0
+    td
+      width 15pt
+      padding 3px
+  .mechanism-table .current-state
+    font-weight bold
+  .mechanism-table .on-row .mapping-arrow
+    color #0f6
+  .mechanism-table .off-row .mapping-arrow
+    color #f66
+.d3-tip.n::after
+  display none
+
+#concept-table
+  margin-top 25px
+  font-size 20
+  td
+    vertical-align middle
+  td.mechanism
+    font-weight bold
+  thead
+    font-weight 700
+    td.large
+      font-size 120%
+    td.subheading
+      border-top 1px
 
 .nav-tabs
   margin-bottom 30px
@@ -46,6 +92,7 @@ a
 
 .lead
   margin-bottom 35px
+  font-weight 300
 
 .animation-controls
   text-align center
@@ -85,7 +132,7 @@ a
     text-align center
     margin-bottom 25px
   .control-label
-    font-weight bold
+    font-weight 600
     font-size 16px
     margin-left 20px
 
@@ -109,6 +156,7 @@ a
   background-image none
 
 #timestep
+  margin 30px 0 30px 0
   text-align center
   font-size 150%
 

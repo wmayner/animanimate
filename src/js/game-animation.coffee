@@ -11,8 +11,10 @@ environment = require './environment'
 NUM_SUBFRAMES = 3
 
 FF_NAMES =
+  state_wvn: 'State differentiation (world vs. noise)'
   mat: 'Matching (average 𝚽 weighted)'
   bp: '𝚽'
+  bp_wvn: '𝚽 (world vs. noise)'
   sp: '∑ 𝛗'
   sp_wvn: '∑ 𝛗 (world vs. noise)'
   ex: 'Extrinsic cause information'
@@ -69,9 +71,14 @@ exports.init = (network, json) ->
 
   getLabel = (index) -> utils.getLabel(index, exports.nodeTypes)
 
-  indicesToLabels = (indices) -> (getLabel(index) for index in indices).join(', ')
+  indicesToLabels = (indices) ->
+    if indices is undefined
+      return ''
+    return (getLabel(index) for index in indices).join(', ')
 
   getConceptRow = (concept) ->
+    if concept is undefined
+      return ''
     return """<tr>
       <td class="mechanism">#{indicesToLabels(concept.mechanism)}</td>
       <td>#{concept.phi}</td>

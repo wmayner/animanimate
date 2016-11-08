@@ -10,6 +10,6 @@
     "c3": "~0.4.10",
     "d3-tip": "0.6.7",
     "d3": "3.5.x",
-    "seiyria-bootstrap-slider": "*"
+    "seiyria-bootstrap-slider": "~9.4.1"
   }
 }

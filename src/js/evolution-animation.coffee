@@ -24,7 +24,7 @@ MAX_FITNESS = 128
 GENERATION_STEP = 512
 
 
-exports.init = (network, positions, generations) ->
+exports.init = (network, generations) ->
 
   charts = [
     new Chart
@@ -57,7 +57,7 @@ exports.init = (network, positions, generations) ->
   # Animation functions.
   render = (nextFrame) ->
     data = generations[nextFrame]
-    animat = network.connectivityToGraph(data.connectivityMatrix, positions)
+    animat = network.graphFromJson(data)
     network.load(animat)
     for chart in charts
       chart.load(nextFrame)

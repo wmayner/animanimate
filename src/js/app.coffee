@@ -34,20 +34,21 @@ $(document).ready ->
   else if network.CONFIG is 'GAME'
     console.log "Initializing game animation."
 
-    measure = 'mat-from-scratch'
-    scrambled = no
-    seed = 4
-    ngen = 60000
-    snapshot = no
-    snapshot = '-1'
+    # measure = 'mat-from-scratch'
+    # scrambled = no
+    # seed = 4
+    # ngen = 60000
+    # snapshot = no
+    # snapshot = '-1'
+    #
+    # version = '0.0.20'
+    # task = '3-4-6-5'
+    # sensors = 3
+    # jumpstart = 0
+    #
+    # path = "data/compiled_results/#{version}/#{measure}/#{task}/sensors-#{sensors}/jumpstart-#{jumpstart}/ngen-#{ngen}/seed-#{seed}/#{if snapshot then 'snapshot-' + snapshot + '/' else ''}game#{if scrambled then '-scrambled' else ''}.json"
 
-    version = '0.0.20'
-    task = '3-4-6-5'
-    sensors = 3
-    jumpstart = 0
-
-    path = "data/compiled_results/#{version}/#{measure}/#{task}/sensors-#{sensors}/jumpstart-#{jumpstart}/ngen-#{ngen}/seed-#{seed}/#{if snapshot then 'snapshot-' + snapshot + '/' else ''}game#{if scrambled then '-scrambled' else ''}.json"
-
+    path = "data/games/game.json"
     console.log "Loading game from path `#{path}`..."
     $.getJSON path, (json) ->
       console.log "Loaded game with configuration:"

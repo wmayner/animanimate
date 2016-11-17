@@ -11,17 +11,19 @@ environment = require './environment'
 NUM_SUBFRAMES = 3
 
 FF_NAMES =
-  mat: 'Matching (average 𝚽 weighted)'
-  bp: '𝚽'
-  bp: '𝚽 (world vs. noise)'
-  sp: '∑ 𝛗'
-  sp_wvn: '∑ 𝛗 (world vs. noise)'
-  ex: 'Extrinsic cause information'
-  ex_wvn: 'Extrinsic cause information (world vs. noise)'
+  nat: 'Correct Trials'
   mi: 'Mutual information'
   mi_wvn: 'Mutual information (world vs. noise)'
+  ex: 'Extrinsic cause information'
+  ex_wvn: 'Extrinsic cause information (world vs. noise)'
+  sp: '∑ 𝛗'
+  sp_wvn: '∑ 𝛗 (world vs. noise)'
+  bp: '𝚽'
+  bp_wvn: '𝚽 (world vs. noise)'
+  sd_wvn: 'State differentiation (world vs. noise)'
+  mat: 'Matching (average 𝚽 weighted)'
   food: 'Food'
-  nat: 'Correct Trials'
+
 
 # Remember to set this once you have loaded the json data.
 exports.nodeTypes = undefined

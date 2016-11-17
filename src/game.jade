@@ -50,14 +50,17 @@ body
         .game-info
           h2 Seed 
             span#seed –
-          .game-info-item Value: 
-            strong#fitness –
-          .game-info-item Generation: 
+          .game-info-item Value:
+            = ' '
+            strong#fitness -
+          .game-info-item Generation:
+            = ' '
             strong#generation –
-          .game-info-item Correct trials: 
+          .game-info-item Correct trials:
+            = ' '
             strong#correct-trials –
-            |  / 
-            strong#incorrect-trials
+            = '/'
+            strong#incorrect-trials –
     .row.clearfix
       .col-lg-6
         #environment-module.module

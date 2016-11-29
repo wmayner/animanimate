@@ -80,10 +80,10 @@ exports.init = (network, json) ->
     return """<tr>
       <td class="mechanism">#{indicesToLabels(concept.mechanism)}</td>
       <td>#{concept.phi}</td>
-      <td>#{indicesToLabels(concept.cause.mip.purview)}</td>
-      <td>#{concept.cause.mip.phi}</td>
-      <td>#{indicesToLabels(concept.effect.mip.purview)}</td>
-      <td>#{concept.effect.mip.phi}</td>
+      <td>#{indicesToLabels(concept.cause.purview)}</td>
+      <td>#{concept.cause.phi}</td>
+      <td>#{indicesToLabels(concept.effect.purview)}</td>
+      <td>#{concept.effect.phi}</td>
     </tr>
     """
 

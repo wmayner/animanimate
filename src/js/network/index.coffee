@@ -324,8 +324,8 @@ exports.load = (newGraph) ->
   update()
 
 
-exports.graphFromJson = (json) ->
-  positions = getPositions(json.config)
+exports.graphFromJson = (json, config) ->
+  positions = getPositions(config)
   graph = new Graph()
   for i in [0...json.cm.length]
     node = graph.addNode(positions[i])

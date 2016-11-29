@@ -24,7 +24,10 @@ MAX_FITNESS = 128
 GENERATION_STEP = 512
 
 
-exports.init = (network, generations) ->
+exports.init = (network, json) ->
+
+  generations = json.lineage
+  config = json.config
 
   charts = [
     new Chart
@@ -57,7 +60,7 @@ exports.init = (network, generations) ->
   # Animation functions.
   render = (nextFrame) ->
     data = generations[nextFrame]
-    animat = network.graphFromJson(data)
+    animat = network.graphFromJson(data, json.config)
     network.load(animat)
     for chart in charts
       chart.load(nextFrame)

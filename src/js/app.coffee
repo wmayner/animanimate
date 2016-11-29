@@ -28,7 +28,7 @@ $(document).ready ->
   if network.CONFIG is 'EVOLUTION'
     console.log "Initializing evolution animation."
     $.getJSON 'data/evolutions/Animat15.json', (json) ->
-      network.nodeTypes = getNodeTypes(json[0].config)
+      network.nodeTypes = getNodeTypes(json.config)
       evolutionAnimation.init(network, json)
 
   else if network.CONFIG is 'GAME'

@@ -6,6 +6,7 @@
 Chart = require './chart'
 colors = require './colors'
 Animation = require './animation'
+utils = require './utils'
 
 
 PHI_CHART_SELECTOR = '#phi-chart'
@@ -27,7 +28,7 @@ exports.init = (network, json) ->
   generations = json.lineage
   config = json.config
 
-  step = generations[generations.length - 1].generation / (generations.length - 1)
+  step = utils.last(generations).generation / (generations.length - 1)
 
   xTick = (x) ->
       return d3.round(x * step, 0)

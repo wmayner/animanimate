@@ -24,6 +24,9 @@ module.exports =
         return false
     return true
 
+  last: (array) ->
+    return array[array.length - 1]
+
   dict: (pairs) ->
     dict = {}
     dict[key] = value for [key, value] in pairs

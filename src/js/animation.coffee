@@ -36,17 +36,17 @@ speedToDelay = (speed) -> MIN_DELAY + DELAY_STEP * (MAX_SPEED - speed)
 class Animation
   constructor: (config) ->
     @render = config.render
-    @lastFrame = config.numFrames
+    @lastFrame = (config.numFrames - 1)
     @timestepSliderStep = config.timestepSliderStep
     @onReset = config.reset or ->
     @timestepFormatter = config.timestepFormatter
     @speed = config.speed or 8
     @speedMultiplier = config.speedMultiplier or 1
 
-    @nextFrame = 0
     @timeout = 0
     @running = false
     @finished = false
+    @currentFrame = 0
 
     # Initialize sliders.
     speedSlider.slider(
@@ -60,7 +60,7 @@ class Animation
     timestepSlider.slider(
       id: 'timestep-slider'
       min: 0
-      max: (@lastFrame - 1)
+      max: @lastFrame
       step: @timestepSliderStep
       value: 0
       formatter: @timestepFormatter
@@ -76,8 +76,7 @@ class Animation
       @speed = e.value
     handleTimestepSlider = (e) =>
       @pause()
-      @setNextFrame(e.value)
-      @render(@nextFrame)
+      @display(e.value)
 
     # Bind event handlers.
     # Spacebar
@@ -96,19 +95,21 @@ class Animation
       .on 'slideStop', handleSpeedSlider
       .data 'slider'
 
-  setNextFrame: (newFrame) ->
-    timestepSlider.slider('setValue', newFrame)
-    timestepDisplay.html(@timestepFormatter newFrame)
-    @nextFrame = newFrame
-    if @nextFrame >= @lastFrame
+    # Show first frame
+    @display(0)
+
+  display: (frame) ->
+    if frame > @lastFrame
       @finished = true
     else
       @finished = false
-    return @nextFrame
+      timestepSlider.slider('setValue', frame)
+      timestepDisplay.html(@timestepFormatter frame)
+      @render(frame)
+      @currentFrame = frame
 
   tick: ->
-    @render(@nextFrame)
-    @setNextFrame(@nextFrame + 1)
+    @display(@currentFrame + 1)
 
   animate: =>
     unless @finished
@@ -118,8 +119,7 @@ class Animation
       @pause()
 
   reset: ->
-    @setNextFrame(0)
-    @finished = false
+    @display(0)
     @onReset()
 
   play: ->

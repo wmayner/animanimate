@@ -36,7 +36,7 @@ speedToDelay = (speed) -> MIN_DELAY + DELAY_STEP * (MAX_SPEED - speed)
 class Animation
   constructor: (config) ->
     @render = config.render
-    @lastFrame = (config.numFrames - 1)
+    @lastFrame = config.numFrames
     @timestepSliderStep = config.timestepSliderStep
     @onReset = config.reset or ->
     @timestepFormatter = config.timestepFormatter
@@ -60,7 +60,7 @@ class Animation
     timestepSlider.slider(
       id: 'timestep-slider'
       min: 0
-      max: @lastFrame
+      max: (@lastFrame - 1)
       step: @timestepSliderStep
       value: 0
       formatter: @timestepFormatter

@@ -42,6 +42,7 @@ class Animation
     @timestepFormatter = config.timestepFormatter
     @speed = config.speed or 8
     @speedMultiplier = config.speedMultiplier or 1
+    @delay = speedToDelay(@speed) * (1 / @speedMultiplier)
 
     @timeout = 0
     @running = false
@@ -114,7 +115,7 @@ class Animation
   animate: =>
     unless @finished
       @tick()
-      @timeout = setTimeout(@animate, speedToDelay(@speed) * (1 / @speedMultiplier))
+      @timeout = setTimeout(@animate, @delay)
     else
       @pause()
 

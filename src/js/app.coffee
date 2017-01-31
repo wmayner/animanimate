@@ -9,12 +9,20 @@ evolutionAnimation = require './evolution-animation'
 gameAnimation = require './game-animation'
 openEvolutionAnimation = require './open-evolution-animation'
 
+# Data files to load
+EVOLUTION_DATA = 'data/evolutions/Animat15.json'
+GAME_DATA = 'data/games/game.json'
+
 
 # Extract node types from JSON config
 getNodeTypes = (config) ->
     'sensors': config.SENSOR_INDICES
     'hidden': config.HIDDEN_INDICES
     'motors': config.MOTOR_INDICES
+
+logConfig = (config) ->
+    console.log("Loaded configuration:"
+    console.log(config)
 
 
 $(document).ready ->
@@ -27,39 +35,26 @@ $(document).ready ->
 
   if network.CONFIG is 'EVOLUTION'
     console.log "Initializing evolution animation."
-    $.getJSON 'data/evolutions/Animat15.json', (json) ->
+    console.log "Loading evolution from `#{EVOLUTION_DATA}`..."
+
+    $.getJSON EVOLUTION_DATA, (json) ->
+      logConfig(json.config)
       network.nodeTypes = getNodeTypes(json.config)
       evolutionAnimation.init(network, json)
 
   else if network.CONFIG is 'GAME'
     console.log "Initializing game animation."
+    console.log "Loading game from path `#{GAME_DATA}`..."
 
-    # measure = 'mat-from-scratch'
-    # scrambled = no
-    # seed = 4
-    # ngen = 60000
-    # snapshot = no
-    # snapshot = '-1'
-    #
-    # version = '0.0.20'
-    # task = '3-4-6-5'
-    # sensors = 3
-    # jumpstart = 0
-    #
-    # path = "data/compiled_results/#{version}/#{measure}/#{task}/sensors-#{sensors}/jumpstart-#{jumpstart}/ngen-#{ngen}/seed-#{seed}/#{if snapshot then 'snapshot-' + snapshot + '/' else ''}game#{if scrambled then '-scrambled' else ''}.json"
-
-    path = "data/games/game.json"
-    console.log "Loading game from path `#{path}`..."
-    $.getJSON path, (json) ->
-      console.log "Loaded game with configuration:"
-      console.log json.config
+    $.getJSON GAME_DATA, (json) ->
+      logConfig(json.config)
       nodeTypes = getNodeTypes(json.config)
       network.nodeTypes = nodeTypes
       gameAnimation.nodeTypes = nodeTypes
       gameAnimation.init(network, json)
 
-  else if network.CONFIG is 'OPENEVOLUTION'
-    console.log "Initializing open-evolution animation."
-    $.getJSON 'data/evolutions/Animat32.json', (json) ->
-      network.nodeTypes = json.nodeTypes
-      openEvolutionAnimation.init(network, json)
+  # else if network.CONFIG is 'OPENEVOLUTION'
+  #   console.log "Initializing open-evolution animation."
+  #   $.getJSON 'data/evolutions/Animat32.json', (json) ->
+  #     network.nodeTypes = json.nodeTypes
+  #     openEvolutionAnimation.init(network, json)

@@ -16,6 +16,7 @@ displayPlayButton = ->
   togglePlaybackButton.find('span')
       .removeClass('glyphicon-pause')
       .addClass('glyphicon-play')
+
 displayPauseButton = ->
   togglePlaybackButton.find('span')
       .removeClass('glyphicon-play')
@@ -29,7 +30,7 @@ DELAY_STEP = 50
 MIN_SPEED = 1
 MAX_SPEED = 10
 
-# Converts a speed, from 1 to 10, to a delay in milliseconds.
+# Convert a speed (from 1 to 10) to a delay in milliseconds.
 speedToDelay = (speed) -> MIN_DELAY + DELAY_STEP * (MAX_SPEED - speed)
 
 
@@ -73,8 +74,10 @@ class Animation
         @pause()
       else
         @play()
+
     handleSpeedSlider = (e) =>
       @speed = e.value
+
     handleTimestepSlider = (e) =>
       @pause()
       @display(e.value)
@@ -85,12 +88,15 @@ class Animation
       if e.keyCode == 32
         handlePlayButton()
         e.stopPropagation()
+
     # Mouseclick
     togglePlaybackButton.mouseup handlePlayButton
+
     timestepSlider
       .on 'slide', handleTimestepSlider
       .on 'slideStop', handleTimestepSlider
       .data 'slider'
+
     speedSlider
       .on 'slide', handleSpeedSlider
       .on 'slideStop', handleSpeedSlider

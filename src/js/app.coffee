@@ -57,6 +57,7 @@ $(document).ready ->
       network.nodeTypes = nodeTypes
       gameAnimation.nodeTypes = nodeTypes
       gameAnimation.init(network, json)
+
   else if network.CONFIG is 'OPENEVOLUTION'
     console.log "Initializing open-evolution animation."
     $.getJSON 'data/evolutions/Animat32.json', (json) ->

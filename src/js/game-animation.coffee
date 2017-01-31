@@ -25,9 +25,6 @@ FF_NAMES =
   food: 'Food'
 
 
-# Remember to set this once you have loaded the json data.
-exports.nodeTypes = undefined
-
 renderGameInfo = (json) ->
   # Update title.
   $('#title').text(FF_NAMES[json.config.FITNESS_FUNCTION])
@@ -72,7 +69,7 @@ exports.init = (network, json) ->
         animat.resetNode(node)
     return
 
-  getLabel = (index) -> utils.getLabel(index, exports.nodeTypes)
+  getLabel = (index) -> utils.getLabel(index, network.nodeTypes)
 
   indicesToLabels = (indices) -> (getLabel(index) for index in indices).join(', ')
 

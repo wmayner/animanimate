@@ -14,15 +14,9 @@ EVOLUTION_DATA = 'data/evolutions/Animat15.json'
 GAME_DATA = 'data/games/game.json'
 
 
-# Extract node types from JSON config
-getNodeTypes = (config) ->
-    'sensors': config.SENSOR_INDICES
-    'hidden': config.HIDDEN_INDICES
-    'motors': config.MOTOR_INDICES
-
 logConfig = (config) ->
-    console.log("Loaded configuration:"
-    console.log(config)
+  console.log "Loaded configuration:"
+  console.log config
 
 
 $(document).ready ->
@@ -39,7 +33,7 @@ $(document).ready ->
 
     $.getJSON EVOLUTION_DATA, (json) ->
       logConfig(json.config)
-      network.nodeTypes = getNodeTypes(json.config)
+      network.configureNodeTypes(json.config)
       evolutionAnimation.init(network, json)
 
   else if network.CONFIG is 'GAME'
@@ -48,9 +42,7 @@ $(document).ready ->
 
     $.getJSON GAME_DATA, (json) ->
       logConfig(json.config)
-      nodeTypes = getNodeTypes(json.config)
-      network.nodeTypes = nodeTypes
-      gameAnimation.nodeTypes = nodeTypes
+      network.configureNodeTypes(json.config)
       gameAnimation.init(network, json)
 
   # else if network.CONFIG is 'OPENEVOLUTION'

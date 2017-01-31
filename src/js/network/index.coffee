@@ -6,10 +6,6 @@ utils = require '../utils'
 Graph = require './graph'
 colors = require '../colors'
 
-# This determines behavior that differs between evolution and game display.
-exports.CONFIG = undefined
-# Remember to set this once you have loaded the json data.
-exports.nodeTypes = undefined
 
 CONTAINER_SELECTOR = '#network-container'
 
@@ -19,6 +15,19 @@ width = 528
 
 MAXIMUM_NODES = 5
 NODE_RADIUS = 25
+
+
+# This determines behavior that differs between evolution and game display.
+exports.CONFIG = undefined
+
+# This must be set by ``configure`` once the json is loaded
+exports.nodeTypes = undefined
+
+exports.configure = (config) ->
+    exports.nodeTypes =
+      'sensors': config.SENSOR_INDICES
+      'hidden': config.HIDDEN_INDICES
+      'motors': config.MOTOR_INDICES
 
 
 # Helpers

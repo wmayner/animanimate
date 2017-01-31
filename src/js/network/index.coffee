@@ -23,12 +23,16 @@ exports.CONFIG = undefined
 # This must be set by ``configure`` once the json is loaded
 exports.nodeTypes = undefined
 
-exports.configure = (config) ->
+exports.configure = (ANIMAT_NETWORK_CONFIG, json_config) ->
+    exports.CONFIG = ANIMAT_NETWORK_CONFIG
     exports.nodeTypes =
-      'sensors': config.SENSOR_INDICES
-      'hidden': config.HIDDEN_INDICES
-      'motors': config.MOTOR_INDICES
+      'sensors': json_config.SENSOR_INDICES
+      'hidden': json_config.HIDDEN_INDICES
+      'motors': json_config.MOTOR_INDICES
 
+    console.log "Configured network for #{exports.CONFIG}"
+    console.log "Loaded configuration:"
+    console.log json_config
 
 # Helpers
 # =============================================================================

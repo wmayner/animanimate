@@ -69,9 +69,8 @@ exports.init = (network, json) ->
         animat.resetNode(node)
     return
 
-  getLabel = (index) -> utils.getLabel(index, network.nodeTypes)
-
-  indicesToLabels = (indices) -> (getLabel(index) for index in indices).join(', ')
+  indicesToLabels = (indices) ->
+      (network.getLabel(index) for index in indices).join(', ')
 
   getConceptRow = (concept) ->
     return """<tr>

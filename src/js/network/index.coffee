@@ -18,19 +18,19 @@ NODE_RADIUS = 25
 
 
 # This determines behavior that differs between evolution and game display.
-exports.CONFIG = undefined
+animation_type = undefined
 
 # This must be set by ``configure`` once the json is loaded
 exports.nodeTypes = undefined
 
 exports.configure = (ANIMAT_NETWORK_CONFIG, json_config) ->
-    exports.CONFIG = ANIMAT_NETWORK_CONFIG
+    animation_type = ANIMAT_NETWORK_CONFIG
     exports.nodeTypes =
       'sensors': json_config.SENSOR_INDICES
       'hidden': json_config.HIDDEN_INDICES
       'motors': json_config.MOTOR_INDICES
 
-    console.log "Configured network for #{exports.CONFIG}"
+    console.log "Configured network for #{animation_type}"
     console.log "Loaded configuration:"
     console.log json_config
 
@@ -285,9 +285,9 @@ update = ->
       .style 'fill', nodeColor
       # Make node more transparent if it is off.
       .style 'fill-opacity', (node) ->
-        if exports.CONFIG is 'EVOLUTION'
+        if animation_type is 'EVOLUTION'
           return 1
-        else if exports.CONFIG is 'GAME'
+        else if animation_type is 'GAME'
           return (if node.on then 1 else 0.3)
       .classed 'reflexive', (node) ->
         node.reflexive
@@ -295,9 +295,9 @@ update = ->
   circleGroup.select '.node-label.id'
     .text (node) -> node.label
     .style 'font-weight', (node) ->
-      if exports.CONFIG is 'EVOLUTION'
+      if animation_type is 'EVOLUTION'
         return 'normal'
-      else if exports.CONFIG is 'GAME'
+      else if animation_type is 'GAME'
         return (if node.justSet then 'bold' else 'normal')
 
 

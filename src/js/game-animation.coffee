@@ -4,7 +4,6 @@
 
 # Initialize interface components
 utils = require './utils'
-network = require './network'
 Animation = require './animation'
 environment = require './environment'
 

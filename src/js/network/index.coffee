@@ -17,28 +17,25 @@ MAXIMUM_NODES = 5
 NODE_RADIUS = 25
 
 
-# This determines behavior that differs between evolution and game display.
+# Either 'EVOLUTION' or 'GAME'
 animation_type = undefined
 
-# This must be set by ``configure`` once the json is loaded
-exports.nodeTypes = undefined
+# Game configuration
+config = undefined
 
 exports.configure = (ANIMAT_NETWORK_CONFIG, json_config) ->
     animation_type = ANIMAT_NETWORK_CONFIG
-    exports.nodeTypes =
-      'sensors': json_config.SENSOR_INDICES
-      'hidden': json_config.HIDDEN_INDICES
-      'motors': json_config.MOTOR_INDICES
+    config = json_config
 
     console.log "Configured network for #{animation_type}"
     console.log "Loaded configuration:"
-    console.log json_config
+    console.log config
 
 # Helpers
 # =============================================================================
 
 # Get node positions.
-getPositions = (config) ->
+getPositions = ->
   positions = utils.dict([i, {fixed: true}] for i in [0...config.NUM_NODES])
   padding = 40
   xscale = d3.scale.linear()
@@ -75,17 +72,17 @@ getPositions = (config) ->
 ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
-getLabel = (index) -> utils.getLabel(index, exports.nodeTypes)
+getLabel = (index) -> utils.getLabel(index, config)
 
 # Color nodes based on role in the animat.
 nodeColor = (node) ->
   if graph.getAllEdgesOf(node._id).length is 0
     return colors.node.other
-  if node.index in exports.nodeTypes.sensors
+  if node.index in config.SENSOR_INDICES
     return colors.node.sensor
-  else if node.index in exports.nodeTypes.hidden
+  else if node.index in config.HIDDEN_INDICES
     return colors.node.hidden
-  else if node.index in exports.nodeTypes.motors
+  else if node.index in config.MOTOR_INDICES
     return colors.node.motor
   else
     return colors.node.other
@@ -337,8 +334,8 @@ exports.load = (newGraph) ->
   update()
 
 
-exports.graphFromJson = (json, config) ->
-  positions = getPositions(config)
+exports.graphFromJson = (json) ->
+  positions = getPositions()
   graph = new Graph()
   for i in [0...json.cm.length]
     node = graph.addNode(positions[i])

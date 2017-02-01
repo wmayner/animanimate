@@ -64,7 +64,7 @@ exports.init = (network, json) ->
   # Animation functions.
   render = (nextFrame) ->
     data = generations[nextFrame]
-    animat = network.graphFromJson(data, json.config)
+    animat = network.graphFromJson(data)
     network.load(animat)
     for chart in charts
       chart.load(nextFrame)

@@ -55,7 +55,7 @@ exports.init = (network, json) ->
   getTrialNum = -> trialNum
 
   # Generate animat graph.
-  animat = network.graphFromJson(json, config)
+  animat = network.graphFromJson(json)
 
   # Initialize network.
   network.load(animat)

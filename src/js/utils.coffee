@@ -32,11 +32,11 @@ module.exports =
     dict[key] = value for [key, value] in pairs
     return dict
 
-  getLabel: (index, nodeTypes) ->
-    if index in nodeTypes.sensors
+  getLabel: (index, config) ->
+    if index in config.SENSOR_INDICES
       return 'S' + (index + 1)
-    if index in nodeTypes.hidden
-      return ALPHABET[index - nodeTypes.sensors.length]
-    if index in nodeTypes.motors
-      return 'M' + (index - nodeTypes.sensors.length -
-                    nodeTypes.hidden.length + 1)
+    if index in config.HIDDEN_INDICES
+      return ALPHABET[index - config.SENSOR_INDICES.length]
+    if index in config.MOTOR_INDICES
+      return 'M' + (index - config.SENSOR_INDICES.length -
+                    config.HIDDEN_INDICES.length + 1)

@@ -16,6 +16,8 @@ width = 528
 MAXIMUM_NODES = 5
 NODE_RADIUS = 25
 
+# Configuration
+# =============================================================================
 
 # Either 'EVOLUTION' or 'GAME'
 animation_type = undefined
@@ -23,10 +25,9 @@ animation_type = undefined
 # Game configuration
 config = undefined
 
-exports.configure = (ANIMAT_NETWORK_CONFIG, json_config) ->
-    animation_type = ANIMAT_NETWORK_CONFIG
+exports.loadConfig = (network_config, json_config) ->
+    animation_type = network_config
     config = json_config
-
     console.log "Configured network for #{animation_type}"
     console.log "Loaded configuration:"
     console.log config

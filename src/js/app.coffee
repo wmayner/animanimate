@@ -23,7 +23,7 @@ $(document).ready ->
     console.log "Loading evolution from `#{EVOLUTION_DATA}`..."
 
     $.getJSON EVOLUTION_DATA, (json) ->
-      network.configure(network_config, json.config)
+      network.loadConfig(network_config, json.config)
       evolutionAnimation.init(network, json)
 
   else if network_config is 'GAME'
@@ -31,7 +31,7 @@ $(document).ready ->
     console.log "Loading game from `#{GAME_DATA}`..."
 
     $.getJSON GAME_DATA, (json) ->
-      network.configure(network_config, json.config)
+      network.loadConfig(network_config, json.config)
       gameAnimation.init(network, json)
 
   # else if network.CONFIG is 'OPENEVOLUTION'

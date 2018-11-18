@@ -4,26 +4,25 @@
 
 # Initialize interface components
 utils = require './utils'
-network = require './network'
 Animation = require './animation'
 environment = require './environment'
 
 NUM_SUBFRAMES = 3
 
 FF_NAMES =
-  state_wvn: 'State differentiation (world vs. noise)'
-  mat: 'Matching (average 𝚽 weighted)'
-  bp: '𝚽'
-  bp_wvn: '𝚽 (world vs. noise)'
-  sp: '∑ 𝛗'
-  sp_wvn: '∑ 𝛗 (world vs. noise)'
-  ex: 'Extrinsic cause information'
-  ex_wvn: 'Extrinsic cause information (world vs. noise)'
+  nat: 'Correct Trials'
   mi: 'Mutual information'
   mi_wvn: 'Mutual information (world vs. noise)'
+  ex: 'Extrinsic cause information'
+  ex_wvn: 'Extrinsic cause information (world vs. noise)'
+  sp: '∑ 𝛗'
+  sp_wvn: '∑ 𝛗 (world vs. noise)'
+  bp: '𝚽'
+  bp_wvn: '𝚽 (world vs. noise)'
+  sd_wvn: 'State differentiation (world vs. noise)'
+  mat: 'Matching (average 𝚽 weighted)'
+  food: 'Food'
 
-# Remember to set this once you have loaded the json data.
-exports.nodeTypes = undefined
 
 renderGameInfo = (json) ->
   # Update title.
@@ -69,23 +68,17 @@ exports.init = (network, json) ->
         animat.resetNode(node)
     return
 
-  getLabel = (index) -> utils.getLabel(index, exports.nodeTypes)
-
   indicesToLabels = (indices) ->
-    if indices is undefined
-      return ''
-    return (getLabel(index) for index in indices).join(', ')
+      (network.getLabel(index) for index in indices).join(', ')
 
   getConceptRow = (concept) ->
-    if concept is undefined
-      return ''
     return """<tr>
       <td class="mechanism">#{indicesToLabels(concept.mechanism)}</td>
       <td>#{concept.phi}</td>
-      <td>#{indicesToLabels(concept.cause.mip.purview)}</td>
-      <td>#{concept.cause.mip.phi}</td>
-      <td>#{indicesToLabels(concept.effect.mip.purview)}</td>
-      <td>#{concept.effect.mip.phi}</td>
+      <td>#{indicesToLabels(concept.cause.purview)}</td>
+      <td>#{concept.cause.phi}</td>
+      <td>#{indicesToLabels(concept.effect.purview)}</td>
+      <td>#{concept.effect.phi}</td>
     </tr>
     """
 

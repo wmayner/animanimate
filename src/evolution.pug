@@ -12,27 +12,37 @@ head
   link(href='/bower_components/bootstrap/dist/css/bootstrap.min.css', rel='stylesheet', type='text/css')
 
   // TODO load minified versions
-  link(href='/bower_components/seiyria-bootstrap-slider/css/bootstrap-slider.css', rel='stylesheet', type='text/css')
+  link(href='/bower_components/seiyria-bootstrap-slider/dist/css/bootstrap-slider.css', rel='stylesheet', type='text/css')
 
   // TODO load minified versions
   link(href='/bower_components/c3/c3.css', rel='stylesheet', type='text/css')
+  
+  // D3-tip stylesheet
+  link(href="//rawgithub.com/Caged/d3-tip/master/examples/example-styles.css", rel="stylesheet")
 
   link(href='/css/app.css', rel='stylesheet', type='text/css')
 
   script(type='text/javascript').
-   window.ANIMAT_NETWORK_CONFIG = 'OPENEVOLUTION';
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-53865041-1', 'auto');
+    ga('send', 'pageview');
+
+  script(type='text/javascript').
+   window.ANIMAT_NETWORK_CONFIG = 'EVOLUTION';
 body
   .container
     .row.clearfix
       .col-md-12
         h1.title Evolving Animats
         ul.nav.nav-tabs
-          li(role="presentation")
+          li.active(role="presentation")
             a(href='/evolution.html') Evolution
           li(role="presentation")
             a(href='/game.html') Task Simulation
-          li.active(role="presentation")
-            a(href='/open-evolution.html') Open Evolution  
         .row.clearfix
           .col-md-12
             p.lead Evolution of one example animat in the Task 4 environment of 
@@ -68,24 +78,37 @@ body
                   li Elements with no connections are grayed-out.
       .col-lg-6
         #chart-module.module
-
+          h2.module-title Fitness
+          #fitness-chart-container.chart-container
+            #fitness-chart.chart.module-canvas
+          h2.module-title Phi
+          #phi-chart-container.chart-container
+            #phi-chart.chart.module-canvas
+          h2.module-title Number of Concepts
+          #num-concepts-chart-container.chart-container
+            #num-concepts-chart.chart.module-canvas
+          .caption
+            p At generation 24,576, the animat's network becomes integrated; a feedback loop appears between nodes A, B, and D. At the same time, the number of concepts (intrinsic causal functions) increased.
     hr
     .row.clearfix
       .col-md-9
         h3 Reference
         p Albantakis L, Hintze A, Koch C, Adami C, Tononi G. 2014. “<a href="http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1003966" target="_blank">Evolution of Integrated Causal Structures in Animats Exposed to Environments of Increasing Complexity</a>.” <em>PLoS computational biology</em>, 10 (12), pp. e1003966.
-              
+        p <em>Visualization:</em> William Mayner
+
   // Online/Offline
   // script(src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
-  script(src='/bower_components/jquery/jquery.min.js')
+  script(src='/bower_components/jquery/dist/jquery.min.js')
 
   // TODO get minified versions
-  script(src='/bower_components/seiyria-bootstrap-slider/js/bootstrap-slider.js')
+  script(src='/bower_components/seiyria-bootstrap-slider/dist/bootstrap-slider.js')
 
   // Online/Offline
   // TODO get minified versions
   // script(src='//cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.js')
   script(src='/bower_components/d3/d3.min.js')
+  
+  script(src='/bower_components/d3-tip/index.js')
 
   // TODO get minified versions
   // Online/Offline

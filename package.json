@@ -9,7 +9,7 @@
   },
   "scripts": {
     "postinstall": "bower install",
-    "prestart": "npm install && gulp build",
+    "prestart": "npm install && mkdir -p app/{css,js} && gulp build",
     "start": "cd app && http-server -a 0.0.0.0 -p 5000"
   },
   "dependencies": {},
@@ -19,10 +19,11 @@
     "coffee-script": ">=1.8.0",
     "del": ">=1.2.0",
     "gulp": ">=3.8.9",
+    "gulp-pug": "3.1.0",
     "gulp-shell": ">=0.4.2",
     "gulp-watch": ">=1.0.5",
     "http-server": ">=0.6.1",
-    "jade": ">=1.8.1",
+    "pug": "2.0.0-beta6",
     "stylus": ">=0.51.1"
   }
 }

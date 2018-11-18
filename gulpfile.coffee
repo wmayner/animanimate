@@ -1,5 +1,6 @@
 del = require 'del'
 gulp = require 'gulp'
+pug = require 'gulp-pug'
 shell = require 'gulp-shell'
 watch = require 'gulp-watch'
 
@@ -10,8 +11,8 @@ APP_DIR = './app'
 STYLUS_DIR = "#{SRC_DIR}/css"
 STYLUS_FILES = "#{STYLUS_DIR}/**/*.styl"
 
-JADE_DIR = SRC_DIR
-JADE_FILES = "#{JADE_DIR}/**/*.jade"
+PUG_DIR = SRC_DIR
+PUG_FILES = "#{PUG_DIR}/**/*.pug"
 
 COFFEE_DIR = "#{SRC_DIR}/js"
 COFFEE_FILES = "#{COFFEE_DIR}/**/*.coffee"
@@ -27,9 +28,10 @@ gulp.task 'clean:css', -> del "#{APP_DIR}/css/*.css"
 
 gulp.task 'clean', ['clean:html', 'clean:js', 'clean:css']
 
-gulp.task 'compile:jade', ['clean:html'], shell.task(
-  "./node_modules/jade/bin/jade.js #{JADE_DIR} -o #{APP_DIR}"
-)
+gulp.task 'compile:pug', ['clean:html'], ->
+    gulp.src PUG_FILES
+        .pipe pug({pretty: true})
+        .pipe gulp.dest(APP_DIR)
 
 gulp.task 'compile:stylus', ['clean:css'], shell.task(
   # Compile with line numbers and sourcemaps
@@ -44,10 +46,10 @@ gulp.task 'browserify', ['compile:coffee'], shell.task(
   "./node_modules/browserify/bin/cmd.js #{ENTRYPOINT} --no-cache -o #{APP_DIR}/js/app.js",
 )
 
-gulp.task 'build', ['compile:jade', 'compile:stylus', 'browserify']
+gulp.task 'build', ['compile:pug', 'compile:stylus', 'browserify']
 
-gulp.task 'watch:jade', ['compile:jade'], ->
-  gulp.watch(JADE_FILES, ['compile:jade'])
+gulp.task 'watch:pug', ['compile:pug'], ->
+  gulp.watch(PUG_FILES, ['compile:pug'])
 
 gulp.task 'watch:stylus', ['compile:stylus'], ->
   gulp.watch(STYLUS_FILES, ['compile:stylus'])
@@ -55,6 +57,6 @@ gulp.task 'watch:stylus', ['compile:stylus'], ->
 gulp.task 'watch:coffee', ['browserify'], ->
   gulp.watch(COFFEE_FILES, ['browserify'])
 
-gulp.task 'dev', ['build', 'watch:jade', 'watch:stylus', 'watch:coffee']
+gulp.task 'dev', ['build', 'watch:pug', 'watch:stylus', 'watch:coffee']
 
 gulp.task 'default', ['dev']

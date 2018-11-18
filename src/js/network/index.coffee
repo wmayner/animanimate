@@ -6,10 +6,6 @@ utils = require '../utils'
 Graph = require './graph'
 colors = require '../colors'
 
-# This determines behavior that differs between evolution and game display.
-exports.CONFIG = undefined
-# Remember to set this once you have loaded the json data.
-exports.nodeTypes = undefined
 
 CONTAINER_SELECTOR = '#network-container'
 
@@ -20,12 +16,27 @@ width = 528
 MAXIMUM_NODES = 5
 NODE_RADIUS = 25
 
+# Configuration
+# =============================================================================
+
+# Either 'EVOLUTION' or 'GAME'
+animation_type = undefined
+
+# Game configuration
+config = undefined
+
+exports.loadConfig = (network_config, json_config) ->
+    animation_type = network_config
+    config = json_config
+    console.log "Configured network for #{animation_type}"
+    console.log "Loaded configuration:"
+    console.log config
 
 # Helpers
 # =============================================================================
 
 # Get node positions.
-getPositions = (config) ->
+getPositions = ->
   positions = utils.dict([i, {fixed: true}] for i in [0...config.NUM_NODES])
   padding = 40
   xscale = d3.scale.linear()
@@ -62,17 +73,17 @@ getPositions = (config) ->
 ALPHABET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
             'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
-getLabel = (index) -> utils.getLabel(index, exports.nodeTypes)
+getLabel = (index) -> utils.getLabel(index, config)
 
 # Color nodes based on role in the animat.
 nodeColor = (node) ->
   if graph.getAllEdgesOf(node._id).length is 0
     return colors.node.other
-  if node.index in exports.nodeTypes.sensors
+  if node.index in config.SENSOR_INDICES
     return colors.node.sensor
-  else if node.index in exports.nodeTypes.hidden
+  else if node.index in config.HIDDEN_INDICES
     return colors.node.hidden
-  else if node.index in exports.nodeTypes.motors
+  else if node.index in config.MOTOR_INDICES
     return colors.node.motor
   else
     return colors.node.other
@@ -272,9 +283,9 @@ update = ->
       .style 'fill', nodeColor
       # Make node more transparent if it is off.
       .style 'fill-opacity', (node) ->
-        if exports.CONFIG is 'EVOLUTION'
+        if animation_type is 'EVOLUTION'
           return 1
-        else if exports.CONFIG is 'GAME'
+        else if animation_type is 'GAME'
           return (if node.on then 1 else 0.3)
       .classed 'reflexive', (node) ->
         node.reflexive
@@ -282,9 +293,9 @@ update = ->
   circleGroup.select '.node-label.id'
     .text (node) -> node.label
     .style 'font-weight', (node) ->
-      if exports.CONFIG is 'EVOLUTION'
+      if animation_type is 'EVOLUTION'
         return 'normal'
-      else if exports.CONFIG is 'GAME'
+      else if animation_type is 'GAME'
         return (if node.justSet then 'bold' else 'normal')
 
 
@@ -325,7 +336,7 @@ exports.load = (newGraph) ->
 
 
 exports.graphFromJson = (json) ->
-  positions = getPositions(json.config)
+  positions = getPositions()
   graph = new Graph()
   for i in [0...json.cm.length]
     node = graph.addNode(positions[i])

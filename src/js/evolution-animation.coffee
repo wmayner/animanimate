@@ -6,6 +6,7 @@
 Chart = require './chart'
 colors = require './colors'
 Animation = require './animation'
+utils = require './utils'
 
 
 PHI_CHART_SELECTOR = '#phi-chart'
@@ -21,10 +22,16 @@ NUM_CONCEPTS_RANGE = [0, 8]
 FITNESS_RANGE = [0, 1]
 MAX_FITNESS = 128
 
-GENERATION_STEP = 512
 
+exports.init = (network, json) ->
 
-exports.init = (network, positions, generations) ->
+  generations = json.lineage
+  config = json.config
+
+  step = utils.last(generations).generation / (generations.length - 1)
+
+  xTick = (x) ->
+      return d3.round(x * step, 0)
 
   charts = [
     new Chart
@@ -35,7 +42,7 @@ exports.init = (network, positions, generations) ->
       min: FITNESS_RANGE[0]
       max: FITNESS_RANGE[1]
       dataTransform: (fitness) -> fitness / MAX_FITNESS
-      xTickFormat: (x) -> d3.round(x * GENERATION_STEP, 0)
+      xTickFormat: xTick
     new Chart
       name: 'Phi'
       bindto: PHI_CHART_SELECTOR
@@ -43,7 +50,7 @@ exports.init = (network, positions, generations) ->
       color: PHI_COLOR
       min: PHI_RANGE[0]
       max: PHI_RANGE[1]
-      xTickFormat: (x) -> d3.round(x * GENERATION_STEP, 0)
+      xTickFormat: xTick
     new Chart
       name: 'Number of Concepts'
       bindto: NUM_CONCEPTS_CHART_SELECTOR
@@ -51,13 +58,13 @@ exports.init = (network, positions, generations) ->
       color: NUM_CONCEPTS_COLOR
       min: NUM_CONCEPTS_RANGE[0]
       max: NUM_CONCEPTS_RANGE[1]
-      xTickFormat: (x) -> d3.round(x * GENERATION_STEP, 0)
+      xTickFormat: xTick
   ]
 
   # Animation functions.
   render = (nextFrame) ->
     data = generations[nextFrame]
-    animat = network.connectivityToGraph(data.connectivityMatrix, positions)
+    animat = network.graphFromJson(data)
     network.load(animat)
     for chart in charts
       chart.load(nextFrame)
@@ -76,7 +83,7 @@ exports.init = (network, positions, generations) ->
     speed: 6
     speedMultiplier: 1
     timestepFormatter: (timestep) ->
-      "Generation #{timestep * GENERATION_STEP}"
+      "Generation #{timestep * step}"
     timestepSliderStep: 1
 
   animation.play()
